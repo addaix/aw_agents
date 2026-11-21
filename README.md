@@ -25,7 +25,7 @@
 
 ```bash
 # From source (recommended for development)
-git clone https://github.com/thorwhalen/aw_agents.git
+git clone https://github.com/addaix/aw_agents.git
 cd aw_agents
 pip install -e .
 
