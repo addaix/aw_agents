@@ -41,10 +41,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://thorwhalen.github.io/aw_agents/"
-Repository = "https://github.com/thorwhalen/aw_agents"
-Issues = "https://github.com/thorwhalen/aw_agents/issues"
-Changelog = "https://github.com/thorwhalen/aw_agents/blob/main/CHANGELOG.md"
+Homepage = "https://addaix.github.io/aw_agents/"
+Repository = "https://github.com/addaix/aw_agents"
+Issues = "https://github.com/addaix/aw_agents/issues"
+Changelog = "https://github.com/addaix/aw_agents/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 mcp = [
