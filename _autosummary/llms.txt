@@ -1,0 +1,21 @@
+# aw_agents
+
+> AI agents for agentic workflows, deployable to multiple chatbot platforms
+
+
+## Pages in this subsection
+
+- [aw_agents](aw_agents.html.md): aw_agents - AI Agents for Agentic Workflows
+- [aw_agents.adapters](aw_agents.adapters.html.md): Adapters for exposing agents to different platforms.
+- [aw_agents.adapters.mcp](aw_agents.adapters.mcp.html.md): MCP (Model Context Protocol) adapter for AW agents.
+- [aw_agents.adapters.openapi](aw_agents.adapters.openapi.html.md): OpenAPI/FastAPI adapter for AW agents.
+- [aw_agents.agents](aw_agents.agents.html.md): Agents for agentic workflows.
+- [aw_agents.agents.download](aw_agents.agents.download.html.md): Download Agent - Smart content downloader with context-aware naming.
+- [aw_agents.agents.download.agent](aw_agents.agents.download.agent.html.md): Download Agent - Smart content downloader with context-aware naming.
+- [aw_agents.agents.download.download_core](aw_agents.agents.download.download_core.html.md): Download Agent: Smart content downloader with context-aware naming and intelligent link handling.
+- [aw_agents.base](aw_agents.base.html.md): Base classes and protocols for AW agents.
+- [aw_agents.util](aw_agents.util.html.md): Utils for aw_agents
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

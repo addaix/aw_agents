@@ -1,0 +1,18 @@
+aw\_agents.adapters.mcp
+=======================
+
+.. automodule:: aw_agents.adapters.mcp
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_mcp_server_script
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MCPAdapter
+   

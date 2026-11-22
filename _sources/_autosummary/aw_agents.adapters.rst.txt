@@ -1,0 +1,28 @@
+aw\_agents.adapters
+===================
+
+.. automodule:: aw_agents.adapters
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_mcp_server_script
+      create_api_server_script
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MCPAdapter
+      OpenAPIAdapter
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mcp
+   openapi

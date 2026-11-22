@@ -1,0 +1,27 @@
+aw\_agents.agents.download
+==========================
+
+.. automodule:: aw_agents.agents.download
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      download_content
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DownloadAgent
+      DownloadEngine
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   agent
+   download_core

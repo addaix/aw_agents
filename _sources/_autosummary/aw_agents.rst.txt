@@ -1,0 +1,34 @@
+﻿aw\_agents
+==========
+
+.. automodule:: aw_agents
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_json_schema
+      create_mcp_server_script
+      create_api_server_script
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AgentBase
+      ToolExecutionResult
+      MCPAdapter
+      OpenAPIAdapter
+      DownloadAgent
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   adapters
+   agents
+   base
+   util

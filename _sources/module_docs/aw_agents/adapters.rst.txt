@@ -1,4 +1,0 @@
-aw_agents.adapters
-==================
-.. automodule:: aw_agents.adapters
-   :members:

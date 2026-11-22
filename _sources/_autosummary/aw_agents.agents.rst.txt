@@ -1,0 +1,19 @@
+aw\_agents.agents
+=================
+
+.. automodule:: aw_agents.agents
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DownloadAgent
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   download

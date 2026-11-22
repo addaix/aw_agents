@@ -1,0 +1,18 @@
+aw\_agents.adapters.openapi
+===========================
+
+.. automodule:: aw_agents.adapters.openapi
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_api_server_script
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      OpenAPIAdapter
+   

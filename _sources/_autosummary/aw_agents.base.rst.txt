@@ -1,0 +1,19 @@
+aw\_agents.base
+===============
+
+.. automodule:: aw_agents.base
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_json_schema
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AgentBase
+      ToolExecutionResult
+   

@@ -1,191 +1,919 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to aw_agents’s documentation! &mdash; aw_agents 0.1.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=92734c54"></script>
-      <script src="_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="aw_agents" href="module_docs/aw_agents.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="#" class="icon icon-home">
-            aw_agents
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents.html">aw_agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters.html">aw_agents.adapters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters/mcp.html">aw_agents.adapters.mcp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters/openapi.html">aw_agents.adapters.openapi</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents.html">aw_agents.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download.html">aw_agents.agents.download</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download/agent.html">aw_agents.agents.download.agent</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download/download_core.html">aw_agents.agents.download.download_core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/base.html">aw_agents.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/util.html">aw_agents.util</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">aw_agents</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to aw_agents’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-aw-agents-s-documentation">
-<h1>Welcome to aw_agents’s documentation!<a class="headerlink" href="#welcome-to-aw-agents-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents.html">aw_agents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.DownloadAgent"><code class="docutils literal notranslate"><span class="pre">DownloadAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.MCPAdapter"><code class="docutils literal notranslate"><span class="pre">MCPAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.OpenAPIAdapter"><code class="docutils literal notranslate"><span class="pre">OpenAPIAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.ToolExecutionResult"><code class="docutils literal notranslate"><span class="pre">ToolExecutionResult</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.create_api_server_script"><code class="docutils literal notranslate"><span class="pre">create_api_server_script()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.create_json_schema"><code class="docutils literal notranslate"><span class="pre">create_json_schema()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents.html#aw_agents.create_mcp_server_script"><code class="docutils literal notranslate"><span class="pre">create_mcp_server_script()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters.html">aw_agents.adapters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters.html#aw_agents.adapters.MCPAdapter"><code class="docutils literal notranslate"><span class="pre">MCPAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters.html#aw_agents.adapters.OpenAPIAdapter"><code class="docutils literal notranslate"><span class="pre">OpenAPIAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters.html#aw_agents.adapters.create_api_server_script"><code class="docutils literal notranslate"><span class="pre">create_api_server_script()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters.html#aw_agents.adapters.create_mcp_server_script"><code class="docutils literal notranslate"><span class="pre">create_mcp_server_script()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters/mcp.html">aw_agents.adapters.mcp</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters/mcp.html#aw_agents.adapters.mcp.MCPAdapter"><code class="docutils literal notranslate"><span class="pre">MCPAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters/mcp.html#aw_agents.adapters.mcp.create_mcp_server_script"><code class="docutils literal notranslate"><span class="pre">create_mcp_server_script()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/adapters/openapi.html">aw_agents.adapters.openapi</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters/openapi.html#aw_agents.adapters.openapi.OpenAPIAdapter"><code class="docutils literal notranslate"><span class="pre">OpenAPIAdapter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/adapters/openapi.html#aw_agents.adapters.openapi.create_api_server_script"><code class="docutils literal notranslate"><span class="pre">create_api_server_script()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents.html">aw_agents.agents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents.html#aw_agents.agents.DownloadAgent"><code class="docutils literal notranslate"><span class="pre">DownloadAgent</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download.html">aw_agents.agents.download</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download.html#aw_agents.agents.download.DownloadAgent"><code class="docutils literal notranslate"><span class="pre">DownloadAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download.html#aw_agents.agents.download.DownloadEngine"><code class="docutils literal notranslate"><span class="pre">DownloadEngine</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download.html#aw_agents.agents.download.download_content"><code class="docutils literal notranslate"><span class="pre">download_content()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download/agent.html">aw_agents.agents.download.agent</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download/agent.html#aw_agents.agents.download.agent.DownloadAgent"><code class="docutils literal notranslate"><span class="pre">DownloadAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download/agent.html#aw_agents.agents.download.agent.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/agents/download/download_core.html">aw_agents.agents.download.download_core</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download/download_core.html#aw_agents.agents.download.download_core.DownloadEngine"><code class="docutils literal notranslate"><span class="pre">DownloadEngine</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/agents/download/download_core.html#aw_agents.agents.download.download_core.download_content"><code class="docutils literal notranslate"><span class="pre">download_content()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/base.html">aw_agents.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/base.html#aw_agents.base.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/base.html#aw_agents.base.ToolExecutionResult"><code class="docutils literal notranslate"><span class="pre">ToolExecutionResult</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/aw_agents/base.html#aw_agents.base.create_json_schema"><code class="docutils literal notranslate"><span class="pre">create_json_schema()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/aw_agents/util.html">aw_agents.util</a></li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.1.2</p>
-<p>Last change: Jun 21, 2026</p>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/aw_agents.html" class="btn btn-neutral float-right" title="aw_agents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
       });
-  </script> 
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="index.html.md" rel="alternate" type="text/markdown"/>
+<link href="llms.txt" rel="describedby" type="text/markdown"/>
+<link href="index.html.md" rel="alternate" type="text/markdown"/>
+<link href="llms.txt" rel="describedby"/>
+<title>aw-agents | aw_agents</title>
+<meta content="aw-agents | aw_agents" property="og:title"/>
+<meta content="aw-agents | aw_agents" name="twitter:title"/>
+<link href="_static/pygments.css?v=d75fae25" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=009055c6" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx_autodoc_typehints.css?v=057ac668" rel="stylesheet" type="text/css"/>
+<link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
+<link href="_static/epythet.css?v=350697b7" rel="stylesheet" type="text/css"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="api.html" rel="next" title="API reference"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="#"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">aw_agents</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/addaix/aw_agents" rel="noopener nofollow">GitHub</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="#"><span class="font-bold text-clip whitespace-nowrap">aw_agents</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://github.com/addaix/aw_agents" rel="nofollow noopener">GitHub</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul>
+<li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="api.html">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
+<li class="toctree-l2" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="_autosummary/aw_agents.html">aw_agents<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/aw_agents.adapters.html">aw_agents.adapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/aw_agents.agents.html">aw_agents.agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/aw_agents.base.html">aw_agents.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/aw_agents.util.html">aw_agents.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<div id="content" role="main">
 
+<section id="aw-agents">
+<h1>aw-agents<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#aw-agents">¶</a></h1>
+<p><strong>AI Agents for Agentic Workflows</strong> - Easily deploy AI agents to multiple chatbot platforms (Claude, ChatGPT, and more).</p>
+<section id="overview">
+<h2>Overview<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#overview" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#overview'">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">aw-agents</span></code> provides a unified framework for building AI agents and deploying them to different chatbot platforms with minimal boilerplate. Write your agent once, deploy everywhere.</p>
+<section id="key-features">
+<h3>Key Features<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#key-features" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#key-features'">¶</a></h3>
+<ul class="simple">
+<li><p>🎯 <strong>Write Once, Deploy Everywhere</strong>: Single agent implementation works with Claude, ChatGPT, and future platforms</p></li>
+<li><p>🔌 <strong>Pluggable Adapters</strong>: MCP for Claude, OpenAPI for ChatGPT</p></li>
+<li><p>📦 <strong>Batteries Included</strong>: Built-in download agent with smart features</p></li>
+<li><p>🛠️ <strong>Easy to Extend</strong>: Simple base class for creating new agents</p></li>
+<li><p>🎨 <strong>Clean Architecture</strong>: Separation of agent logic and platform adapters</p></li>
+<li><p>🚀 <strong>Run as Script</strong>: Each agent can run directly as a server with built-in setup instructions</p></li>
+</ul>
+</section>
+</section>
+<section id="documentation">
+<h2>Documentation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#documentation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#documentation'">¶</a></h2>
+<ul class="simple">
+<li><p>📚 <strong><a class="reference internal" href="#USAGE.md"><span class="xref myst">Quick Usage Guide</span></a></strong> - Simplest way to run agents</p></li>
+<li><p>📖 <strong><a class="reference internal" href="#"><span class="xref myst">This README</span></a></strong> - Comprehensive documentation</p></li>
+<li><p>💻 <strong><a class="reference internal" href="#examples.py"><span class="xref myst">Examples</span></a></strong> - Code examples</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#installation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#installation'">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># From source (recommended for development)</span>
+</span><span id="line-2">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/addaix/aw_agents.git
+</span><span id="line-3"><span class="nb">cd</span><span class="w"> </span>aw_agents
+</span><span id="line-4">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</span><span id="line-5">
+</span><span id="line-6"><span class="c1"># With Claude Desktop support (MCP)</span>
+</span><span id="line-7">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>mcp<span class="o">]</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="c1"># With ChatGPT Custom GPT support (FastAPI)</span>
+</span><span id="line-10">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>api<span class="o">]</span>
+</span><span id="line-11">
+</span><span id="line-12"><span class="c1"># With all features</span>
+</span><span id="line-13">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>all<span class="o">]</span>
+</span><span id="line-14">
+</span><span id="line-15"><span class="c1"># For development</span>
+</span><span id="line-16">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
+</span></code></pre></div>
+</div>
+<section id="verify-installation">
+<h3>Verify Installation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#verify-installation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#verify-installation'">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Test the installation</span>
+</span><span id="line-2">python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"from aw_agents.agents.download import DownloadAgent; agent = DownloadAgent(); print('✓ Installation successful!')"</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#quick-start" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#quick-start'">¶</a></h2>
+<section id="easiest-way-run-agent-as-server">
+<h3>Easiest Way: Run Agent as Server<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#easiest-way-run-agent-as-server" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#easiest-way-run-agent-as-server'">¶</a></h3>
+<p>Each agent can be run directly as a server with built-in instructions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># For Claude Desktop (MCP server)</span>
+</span><span id="line-2">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--mcp
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># For ChatGPT (FastAPI server)</span>
+</span><span id="line-5">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--api
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># With ngrok for remote access</span>
+</span><span id="line-8">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--api<span class="w"> </span>--server-url<span class="w"> </span>https://your-ngrok-url.ngrok.io
+</span></code></pre></div>
+</div>
+<p>The agent will print:</p>
+<ul class="simple">
+<li><p>✅ Configuration snippets (copy-paste ready)</p></li>
+<li><p>📍 Exact file locations for configs</p></li>
+<li><p>📋 Step-by-step setup instructions</p></li>
+<li><p>🚀 Everything you need to get started</p></li>
+<li><p>🌐 Proper OpenAPI schema with server URLs (fixes ChatGPT import issues)</p></li>
+</ul>
+</section>
+<section id="using-the-download-agent">
+<h3>Using the Download Agent<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#using-the-download-agent" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#using-the-download-agent'">¶</a></h3>
+<p>The package includes a smart download agent out of the box:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.agents.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">DownloadAgent</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">agent</span> <span class="o">=</span> <span class="n">DownloadAgent</span><span class="p">()</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="c1"># Get available tools</span>
+</span><span id="line-6"><span class="n">tools</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_tools</span><span class="p">()</span>
+</span><span id="line-7"><span class="nb">print</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">])</span>
+</span><span id="line-8"><span class="c1"># ['download_content', 'download_multiple', 'list_downloads']</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="c1"># Execute a tool</span>
+</span><span id="line-11"><span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-12">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://arxiv.org/pdf/2103.00020.pdf'</span><span class="p">,</span>
+</span><span id="line-13">    <span class="s1">'context'</span><span class="p">:</span> <span class="s1">'Important ML Paper'</span>
+</span><span id="line-14"><span class="p">})</span>
+</span><span id="line-15">
+</span><span id="line-16"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">'data'</span><span class="p">][</span><span class="s1">'path'</span><span class="p">])</span>  <span class="c1"># ~/Downloads/Important_ML_Paper.pdf</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="deploy-to-claude-desktop-mcp">
+<h3>Deploy to Claude Desktop (MCP)<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#deploy-to-claude-desktop-mcp" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#deploy-to-claude-desktop-mcp'">¶</a></h3>
+<p><strong>Quick Start - Run the agent directly:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># The agent will automatically configure Claude Desktop for you!</span>
+</span><span id="line-2">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--mcp
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Or run directly:</span>
+</span><span id="line-5">python<span class="w"> </span>aw_agents/agents/download/agent.py<span class="w"> </span>--mcp
+</span></code></pre></div>
+</div>
+<p>The agent will:</p>
+<ul class="simple">
+<li><p><strong>Automatically add itself to your Claude Desktop config</strong></p></li>
+<li><p>Start the MCP server</p></li>
+<li><p>Give you step-by-step instructions</p></li>
+<li><p>You just need to restart Claude Desktop!</p></li>
+</ul>
+<p><strong>Managing Claude Desktop Configuration:</strong></p>
+<p>The agent uses <code class="docutils literal notranslate"><span class="pre">claude_desktop_config()</span></code> from the <code class="docutils literal notranslate"><span class="pre">aw</span></code> package to automatically manage your Claude Desktop configuration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_desktop_config</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># View all configured MCP servers</span>
+</span><span id="line-4"><span class="n">mcp</span> <span class="o">=</span> <span class="n">claude_desktop_config</span><span class="p">()</span>
+</span><span id="line-5"><span class="nb">list</span><span class="p">(</span><span class="n">mcp</span><span class="p">)</span>  <span class="c1"># ['download', 'other_server', ...]</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># Add a new server manually</span>
+</span><span id="line-8"><span class="n">mcp</span><span class="p">[</span><span class="s1">'my_agent'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-9">    <span class="s1">'command'</span><span class="p">:</span> <span class="s1">'python'</span><span class="p">,</span>
+</span><span id="line-10">    <span class="s1">'args'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'/path/to/my_agent.py'</span><span class="p">]</span>
+</span><span id="line-11"><span class="p">}</span>
+</span><span id="line-12">
+</span><span id="line-13"><span class="c1"># Remove a server</span>
+</span><span id="line-14"><span class="k">del</span> <span class="n">mcp</span><span class="p">[</span><span class="s1">'old_server'</span><span class="p">]</span>
+</span><span id="line-15">
+</span><span id="line-16"><span class="c1"># View a server's config</span>
+</span><span id="line-17"><span class="nb">print</span><span class="p">(</span><span class="n">mcp</span><span class="p">[</span><span class="s1">'download'</span><span class="p">])</span>
+</span></code></pre></div>
+</div>
+<p><strong>Manual Setup (Alternative):</strong></p>
+<p>If you prefer to create your own script and manage configuration manually:</p>
+<p><strong>Step 1: Create MCP Server Script</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.agents.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">DownloadAgent</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPAdapter</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="n">agent</span> <span class="o">=</span> <span class="n">DownloadAgent</span><span class="p">()</span>
+</span><span id="line-5"><span class="n">adapter</span> <span class="o">=</span> <span class="n">MCPAdapter</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"download-agent"</span><span class="p">)</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># This starts an MCP server for Claude Desktop</span>
+</span><span id="line-8"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span id="line-9">    <span class="n">adapter</span><span class="o">.</span><span class="n">run_sync</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<p>Save this as <code class="docutils literal notranslate"><span class="pre">mcp_download.py</span></code> or use the deployment script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">python<span class="w"> </span>scripts/deploy_mcp.py<span class="w"> </span>DownloadAgent<span class="w"> </span>--output<span class="w"> </span>mcp_download.py
+</span></code></pre></div>
+</div>
+<p><strong>Step 2: Configure Claude Desktop</strong></p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">claude_desktop_config()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_desktop_config</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">mcp</span> <span class="o">=</span> <span class="n">claude_desktop_config</span><span class="p">()</span>
+</span><span id="line-4"><span class="n">mcp</span><span class="p">[</span><span class="s1">'download'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-5">    <span class="s1">'command'</span><span class="p">:</span> <span class="s1">'python'</span><span class="p">,</span>
+</span><span id="line-6">    <span class="s1">'args'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'/absolute/path/to/mcp_download.py'</span><span class="p">]</span>
+</span><span id="line-7"><span class="p">}</span>
+</span></code></pre></div>
+</div>
+<p>Or manually edit the config file:</p>
+<ul class="simple">
+<li><p><strong>macOS</strong>: <code class="docutils literal notranslate"><span class="pre">~/Library/Application</span> <span class="pre">Support/Claude/claude_desktop_config.json</span></code></p></li>
+<li><p><strong>Windows</strong>: <code class="docutils literal notranslate"><span class="pre">%APPDATA%\Claude\claude_desktop_config.json</span></code></p></li>
+<li><p><strong>Linux</strong>: <code class="docutils literal notranslate"><span class="pre">~/.config/Claude/claude_desktop_config.json</span></code></p></li>
+</ul>
+<p><strong>Important</strong>: Use absolute paths, not <code class="docutils literal notranslate"><span class="pre">~/</span></code> or relative paths.</p>
+<p><strong>Step 3: Restart Claude Desktop</strong></p>
+<p>Completely quit and restart Claude Desktop.</p>
+<p><strong>Step 4: Test It</strong></p>
+<p>Ask Claude:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">Download</span> <span class="n">this</span> <span class="n">paper</span> <span class="k">for</span> <span class="n">me</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="mf">2103.00020</span><span class="o">.</span><span class="n">pdf</span>
+</span><span id="line-2"><span class="n">Context</span><span class="p">:</span> <span class="s2">"Attention is All You Need"</span>
+</span></code></pre></div>
+</div>
+<p><strong>Troubleshooting</strong>:</p>
+<ul class="simple">
+<li><p>Check logs: <code class="docutils literal notranslate"><span class="pre">~/Library/Logs/Claude/</span></code> (macOS)</p></li>
+<li><p>Verify Python path in config</p></li>
+<li><p>Ensure dependencies are installed in the correct Python environment</p></li>
+</ul>
+</section>
+<section id="deploy-to-chatgpt-custom-gpt-fastapi">
+<h3>Deploy to ChatGPT Custom GPT (FastAPI)<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#deploy-to-chatgpt-custom-gpt-fastapi" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#deploy-to-chatgpt-custom-gpt-fastapi'">¶</a></h3>
+<p><strong>Quick Start - Run the agent directly:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># The agent will print setup instructions for you</span>
+</span><span id="line-2">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--api
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Or specify a custom port:</span>
+</span><span id="line-5">python<span class="w"> </span>aw_agents/agents/download/agent.py<span class="w"> </span>--api<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span>
+</span></code></pre></div>
+</div>
+<p>The agent will:</p>
+<ul class="simple">
+<li><p>Start the FastAPI server</p></li>
+<li><p>Print the server URLs (API, docs, OpenAPI schema)</p></li>
+<li><p>Show you exactly how to configure ChatGPT Custom GPT</p></li>
+<li><p>Provide ngrok instructions for remote access</p></li>
+</ul>
+<p><strong>Manual Setup (Alternative):</strong></p>
+<p><strong>Step 1: Create and Start API Server</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.agents.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">DownloadAgent</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAPIAdapter</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="n">agent</span> <span class="o">=</span> <span class="n">DownloadAgent</span><span class="p">()</span>
+</span><span id="line-5"><span class="n">adapter</span> <span class="o">=</span> <span class="n">OpenAPIAdapter</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Download Agent API"</span><span class="p">)</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># This starts a FastAPI server</span>
+</span><span id="line-8"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span id="line-9">    <span class="n">adapter</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p>Save this as <code class="docutils literal notranslate"><span class="pre">api_download.py</span></code> or use the deployment script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">python<span class="w"> </span>scripts/deploy_api.py<span class="w"> </span>DownloadAgent<span class="w"> </span>--output<span class="w"> </span>api_download.py
+</span><span id="line-2">python<span class="w"> </span>api_download.py<span class="w">  </span><span class="c1"># Start the server</span>
+</span></code></pre></div>
+</div>
+<p>The server will be available at http://localhost:8000</p>
+<p><strong>Step 2: Create Custom GPT</strong></p>
+<ol class="arabic">
+<li><p>Go to https://chat.openai.com/gpts/editor</p></li>
+<li><p>Click “Create a GPT”</p></li>
+<li><p>Name it (e.g., “Download Assistant”)</p></li>
+<li><p>Add instructions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">You</span> <span class="n">help</span> <span class="n">users</span> <span class="n">download</span> <span class="n">files</span> <span class="kn">from</span><span class="w"> </span><span class="nn">URLs.</span> <span class="n">Use</span> <span class="n">the</span> <span class="n">download_content</span> 
+</span><span id="line-2"><span class="n">action</span> <span class="n">when</span> <span class="n">users</span> <span class="n">provide</span> <span class="n">URLs</span><span class="o">.</span> <span class="n">Always</span> <span class="n">ask</span> <span class="k">for</span> <span class="n">context</span> <span class="n">to</span> <span class="n">generate</span> 
+</span><span id="line-3"><span class="n">good</span> <span class="n">filenames</span><span class="o">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">download</span> <span class="n">multiple</span> <span class="n">files</span> <span class="n">at</span> <span class="n">once</span> <span class="ow">and</span> <span class="nb">list</span> 
+</span><span id="line-4"><span class="n">previously</span> <span class="n">downloaded</span> <span class="n">files</span><span class="o">.</span>
+</span></code></pre></div>
+</div>
+</li>
+</ol>
+<p><strong>Step 3: Add Actions</strong></p>
+<ol class="arabic simple">
+<li><p>In the GPT editor, go to “Configure” → “Actions”</p></li>
+<li><p>Click “Create new action”</p></li>
+<li><p>Import schema from: <code class="docutils literal notranslate"><span class="pre">http://localhost:8000/openapi.json</span></code></p></li>
+<li><p>Click “Add Action”</p></li>
+</ol>
+<p><strong>Step 4: Test Your GPT</strong></p>
+<p>Ask your Custom GPT:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">Download</span> <span class="n">this</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">repo</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">main</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">csv</span>
+</span><span id="line-2"><span class="n">Context</span><span class="p">:</span> <span class="s2">"Sales Data Q4"</span>
+</span></code></pre></div>
+</div>
+<p><strong>Important Notes</strong>:</p>
+<ul class="simple">
+<li><p><strong>Local Testing</strong>: ChatGPT servers can’t access <code class="docutils literal notranslate"><span class="pre">localhost</span></code> from OpenAI’s infrastructure</p></li>
+<li><p><strong>For Remote Access</strong>:</p>
+<ul>
+<li><p>Use ngrok: <code class="docutils literal notranslate"><span class="pre">ngrok</span> <span class="pre">http</span> <span class="pre">8000</span></code> (provides a public URL)</p></li>
+<li><p>Deploy to cloud service (AWS, GCP, Azure, Heroku)</p></li>
+<li><p>Use local network IP if on the same network</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Production Deployment</strong>:</p>
+<ol class="arabic simple">
+<li><p>Deploy to cloud service with HTTPS</p></li>
+<li><p>Add authentication (API keys, OAuth)</p></li>
+<li><p>Update Custom GPT actions with public URL</p></li>
+</ol>
+</section>
+</section>
+<section id="architecture">
+<h2>Architecture<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#architecture" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#architecture'">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">aw_agents/
+</span><span id="line-2">├── base.py              # AgentBase, ToolExecutionResult
+</span><span id="line-3">├── adapters/
+</span><span id="line-4">│   ├── mcp.py          # MCPAdapter for Claude
+</span><span id="line-5">│   └── openapi.py      # OpenAPIAdapter for ChatGPT
+</span><span id="line-6">└── download/           # Download agent implementation
+</span><span id="line-7">    ├── agent.py        # DownloadAgent (AgentBase subclass)
+</span><span id="line-8">    └── download_core.py # Core download logic
+</span></code></pre></div>
+</div>
+<section id="creating-your-own-agent">
+<h3>Creating Your Own Agent<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#creating-your-own-agent" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#creating-your-own-agent'">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">ToolExecutionResult</span><span class="p">,</span> <span class="n">create_json_schema</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+</span><span id="line-4"><span class="w">    </span><span class="sd">"""My custom agent."""</span>
+</span><span id="line-5">    
+</span><span id="line-6">    <span class="k">def</span><span class="w"> </span><span class="nf">get_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-7">        <span class="k">return</span> <span class="p">[</span>
+</span><span id="line-8">            <span class="p">{</span>
+</span><span id="line-9">                <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'my_tool'</span><span class="p">,</span>
+</span><span id="line-10">                <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Does something useful'</span><span class="p">,</span>
+</span><span id="line-11">                <span class="s1">'parameters'</span><span class="p">:</span> <span class="n">create_json_schema</span><span class="p">(</span>
+</span><span id="line-12">                    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-13">                        <span class="s1">'input'</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="line-14">                            <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'string'</span><span class="p">,</span>
+</span><span id="line-15">                            <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Input text'</span>
+</span><span id="line-16">                        <span class="p">}</span>
+</span><span id="line-17">                    <span class="p">},</span>
+</span><span id="line-18">                    <span class="n">required</span><span class="o">=</span><span class="p">[</span><span class="s1">'input'</span><span class="p">]</span>
+</span><span id="line-19">                <span class="p">)</span>
+</span><span id="line-20">            <span class="p">}</span>
+</span><span id="line-21">        <span class="p">]</span>
+</span><span id="line-22">    
+</span><span id="line-23">    <span class="k">def</span><span class="w"> </span><span class="nf">execute_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
+</span><span id="line-24">        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">'my_tool'</span><span class="p">:</span>
+</span><span id="line-25">            <span class="c1"># Your logic here</span>
+</span><span id="line-26">            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="s1">'input'</span><span class="p">])</span>
+</span><span id="line-27">            
+</span><span id="line-28">            <span class="k">return</span> <span class="n">ToolExecutionResult</span><span class="o">.</span><span class="n">success_result</span><span class="p">(</span>
+</span><span id="line-29">                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">'output'</span><span class="p">:</span> <span class="n">result</span><span class="p">},</span>
+</span><span id="line-30">                <span class="n">message</span><span class="o">=</span><span class="s2">"Processed successfully"</span>
+</span><span id="line-31">            <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</span><span id="line-32">        
+</span><span id="line-33">        <span class="k">return</span> <span class="n">ToolExecutionResult</span><span class="o">.</span><span class="n">error_result</span><span class="p">(</span>
+</span><span id="line-34">            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Unknown tool: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-35">        <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</span><span id="line-36">    
+</span><span id="line-37">    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_text</span><span class="p">):</span>
+</span><span id="line-38">        <span class="c1"># Your implementation</span>
+</span><span id="line-39">        <span class="k">return</span> <span class="n">input_text</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<p>Then deploy it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># For Claude</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPAdapter</span>
+</span><span id="line-3"><span class="n">adapter</span> <span class="o">=</span> <span class="n">MCPAdapter</span><span class="p">(</span><span class="n">MyAgent</span><span class="p">(),</span> <span class="s2">"my-agent"</span><span class="p">)</span>
+</span><span id="line-4"><span class="n">adapter</span><span class="o">.</span><span class="n">run_sync</span><span class="p">()</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="c1"># For ChatGPT</span>
+</span><span id="line-7"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAPIAdapter</span>
+</span><span id="line-8"><span class="n">adapter</span> <span class="o">=</span> <span class="n">OpenAPIAdapter</span><span class="p">(</span><span class="n">MyAgent</span><span class="p">())</span>
+</span><span id="line-9"><span class="n">adapter</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8001</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="included-agents">
+<h2>Included Agents<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#included-agents" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#included-agents'">¶</a></h2>
+<section id="download-agent">
+<h3>Download Agent<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#download-agent" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#download-agent'">¶</a></h3>
+<p>Smart content downloader with:</p>
+<ul class="simple">
+<li><p><strong>Landing page detection</strong>: Automatically finds actual download links</p></li>
+<li><p><strong>Context-aware file naming</strong>: Uses conversation context for meaningful filenames</p></li>
+<li><p><strong>Special handling for</strong>:</p>
+<ul>
+<li><p>GitHub (converts blob URLs to raw)</p></li>
+<li><p>HuggingFace (handles dataset downloads)</p></li>
+<li><p>Kaggle datasets</p></li>
+<li><p>Academic papers (arXiv, etc.)</p></li>
+</ul>
+</li>
+<li><p><strong>Support for</strong>: PDFs, datasets, CSV, JSON, and more</p></li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">download_content</span></code> - Download a single URL with smart handling</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">download_multiple</span></code> - Download multiple URLs at once</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_downloads</span></code> - List downloaded files</p></li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.agents.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">DownloadAgent</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">agent</span> <span class="o">=</span> <span class="n">DownloadAgent</span><span class="p">()</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="c1"># Download with context-aware naming</span>
+</span><span id="line-6"><span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-7">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://github.com/user/repo/blob/main/data.csv'</span><span class="p">,</span>
+</span><span id="line-8">    <span class="s1">'context'</span><span class="p">:</span> <span class="s1">'Dataset for analysis'</span>
+</span><span id="line-9"><span class="p">})</span>
+</span><span id="line-10"><span class="c1"># Automatically converts to raw.githubusercontent.com</span>
+</span><span id="line-11"><span class="c1"># Saves as: Dataset_for_analysis.csv</span>
+</span><span id="line-12">
+</span><span id="line-13"><span class="c1"># Download multiple files</span>
+</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_multiple'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-15">    <span class="s1">'urls'</span><span class="p">:</span> <span class="p">[</span>
+</span><span id="line-16">        <span class="s1">'https://arxiv.org/pdf/2103.00020.pdf'</span><span class="p">,</span>
+</span><span id="line-17">        <span class="s1">'https://arxiv.org/pdf/1706.03762.pdf'</span>
+</span><span id="line-18">    <span class="p">],</span>
+</span><span id="line-19">    <span class="s1">'contexts'</span><span class="p">:</span> <span class="p">[</span>
+</span><span id="line-20">        <span class="s1">'Attention Paper'</span><span class="p">,</span>
+</span><span id="line-21">        <span class="s1">'Transformer Original'</span>
+</span><span id="line-22">    <span class="p">]</span>
+</span><span id="line-23"><span class="p">})</span>
+</span><span id="line-24">
+</span><span id="line-25"><span class="c1"># List downloaded PDFs</span>
+</span><span id="line-26"><span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'list_downloads'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-27">    <span class="s1">'pattern'</span><span class="p">:</span> <span class="s1">'*.pdf'</span>
+</span><span id="line-28"><span class="p">})</span>
+</span></code></pre></div>
+</div>
+<p><strong>Smart Features:</strong></p>
+<ol class="arabic">
+<li><p><strong>Intelligent Extension Detection</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Priority-based routing handles edge cases correctly</span>
+</span><span id="line-2"><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-3">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://arxiv.org/pdf/2103.00020.pdf'</span><span class="p">,</span>
+</span><span id="line-4">    <span class="s1">'context'</span><span class="p">:</span> <span class="s1">'ML Paper'</span>
+</span><span id="line-5"><span class="p">})</span>
+</span><span id="line-6"><span class="c1"># Result: ML_Paper.pdf ✓ (not .html despite Content-Type header)</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="c1"># Explicit extension override</span>
+</span><span id="line-9"><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-10">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://example.com/ambiguous_file'</span><span class="p">,</span>
+</span><span id="line-11">    <span class="s1">'context'</span><span class="p">:</span> <span class="s1">'Data'</span><span class="p">,</span>
+</span><span id="line-12">    <span class="s1">'explicit_extension'</span><span class="p">:</span> <span class="s1">'csv'</span>
+</span><span id="line-13"><span class="p">})</span>
+</span><span id="line-14"><span class="c1"># Result: Data.csv</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p><strong>Landing Page Detection</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Input: Landing page URL</span>
+</span><span id="line-2"><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-3">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://papers.nips.cc/paper/2017/hash/xxx-Abstract.html'</span>
+</span><span id="line-4"><span class="p">})</span>
+</span><span id="line-5"><span class="c1"># Agent detects HTML, finds PDF link, downloads PDF, warns about redirect</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p><strong>GitHub URL Handling</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Input: GitHub blob URL</span>
+</span><span id="line-2"><span class="s1">'https://github.com/user/repo/blob/main/data.csv'</span>
+</span><span id="line-3"><span class="c1"># Converts to: </span>
+</span><span id="line-4"><span class="s1">'https://raw.githubusercontent.com/user/repo/main/data.csv'</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p><strong>Context-Aware Naming</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Without context:</span>
+</span><span id="line-2"><span class="c1"># Filename: 2103.00020.pdf</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># With context:</span>
+</span><span id="line-5"><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s1">'download_content'</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="line-6">    <span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://arxiv.org/pdf/2103.00020.pdf'</span><span class="p">,</span>
+</span><span id="line-7">    <span class="s1">'context'</span><span class="p">:</span> <span class="s1">'Attention is All You Need - Transformer Paper'</span>
+</span><span id="line-8"><span class="p">})</span>
+</span><span id="line-9"><span class="c1"># Filename: Attention_is_All_You_Need_Transformer_Paper.pdf</span>
+</span></code></pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="customizing-extension-detection">
+<h3>Customizing Extension Detection<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#customizing-extension-detection" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#customizing-extension-detection'">¶</a></h3>
+<p>The download agent uses configurable routing from the <code class="docutils literal notranslate"><span class="pre">aw.routing</span></code> module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw.routing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtensionRouter</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.agents.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">DownloadEngine</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Inspect default mappings</span>
+</span><span id="line-5"><span class="n">router</span> <span class="o">=</span> <span class="n">ExtensionRouter</span><span class="p">()</span>
+</span><span id="line-6"><span class="nb">print</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">content_type_map</span><span class="p">)</span>
+</span><span id="line-7"><span class="nb">print</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">priority_extensions</span><span class="p">)</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="c1"># Customize mappings</span>
+</span><span id="line-10"><span class="n">router</span><span class="o">.</span><span class="n">content_type_map</span><span class="p">[</span><span class="s1">'text/x-log'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'.log'</span>
+</span><span id="line-11">
+</span><span id="line-12"><span class="c1"># Add custom detection strategy</span>
+</span><span id="line-13"><span class="k">def</span><span class="w"> </span><span class="nf">detect_special</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-14">    <span class="k">if</span> <span class="s1">'special'</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+</span><span id="line-15">        <span class="k">return</span> <span class="s1">'.special'</span>
+</span><span id="line-16">    <span class="k">return</span> <span class="kc">None</span>
+</span><span id="line-17">
+</span><span id="line-18"><span class="n">custom_router</span> <span class="o">=</span> <span class="n">router</span><span class="o">.</span><span class="n">with_prepended_strategy</span><span class="p">(</span><span class="n">detect_special</span><span class="p">)</span>
+</span><span id="line-19">
+</span><span id="line-20"><span class="c1"># Use in agent</span>
+</span><span id="line-21"><span class="n">engine</span> <span class="o">=</span> <span class="n">DownloadEngine</span><span class="p">(</span><span class="n">extension_router</span><span class="o">=</span><span class="n">custom_router</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p>See <a class="reference internal" href="#EXTENSION_ROUTING_SUMMARY.md"><span class="xref myst">EXTENSION_ROUTING_SUMMARY.md</span></a> for details.</p>
+</section>
+</section>
+<section id="integration-guides">
+<h2>Integration Guides<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#integration-guides" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#integration-guides'">¶</a></h2>
+<section id="claude-desktop-integration">
+<h3>Claude Desktop Integration<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#claude-desktop-integration" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#claude-desktop-integration'">¶</a></h3>
+<p><strong>Easiest Way - Automatic Configuration:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Run the agent - it will automatically configure Claude Desktop!</span>
+</span><span id="line-2">python<span class="w"> </span>-m<span class="w"> </span>aw_agents.agents.download.agent<span class="w"> </span>--mcp
+</span></code></pre></div>
+</div>
+<p>The agent automatically adds itself to your Claude Desktop config. Just restart Claude Desktop and you’re done!</p>
+<p><strong>Alternative - Manual Configuration:</strong></p>
+<ol class="arabic">
+<li><p>Create MCP server script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">python<span class="w"> </span>scripts/deploy_mcp.py<span class="w"> </span>DownloadAgent<span class="w"> </span>--output<span class="w"> </span>~/mcp_download.py
+</span></code></pre></div>
+</div>
+</li>
+<li><p>Add to Claude Desktop config using <code class="docutils literal notranslate"><span class="pre">claude_desktop_config()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_desktop_config</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">mcp</span> <span class="o">=</span> <span class="n">claude_desktop_config</span><span class="p">()</span>
+</span><span id="line-4"><span class="n">mcp</span><span class="p">[</span><span class="s1">'download'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-5">    <span class="s1">'command'</span><span class="p">:</span> <span class="s1">'python'</span><span class="p">,</span>
+</span><span id="line-6">    <span class="s1">'args'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'/absolute/path/to/mcp_download.py'</span><span class="p">]</span>
+</span><span id="line-7"><span class="p">}</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p>Restart Claude Desktop</p></li>
+</ol>
+<p><strong>Managing Servers:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">claude_desktop_config</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">mcp</span> <span class="o">=</span> <span class="n">claude_desktop_config</span><span class="p">()</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="c1"># List all servers</span>
+</span><span id="line-6"><span class="nb">list</span><span class="p">(</span><span class="n">mcp</span><span class="p">)</span>  <span class="c1"># ['download', 'other_server', ...]</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="c1"># View a server's config</span>
+</span><span id="line-9"><span class="nb">print</span><span class="p">(</span><span class="n">mcp</span><span class="p">[</span><span class="s1">'download'</span><span class="p">])</span>
+</span><span id="line-10">
+</span><span id="line-11"><span class="c1"># Remove a server</span>
+</span><span id="line-12"><span class="k">del</span> <span class="n">mcp</span><span class="p">[</span><span class="s1">'old_server'</span><span class="p">]</span>
+</span></code></pre></div>
+</div>
+<p><strong>Config file locations:</strong></p>
+<ul class="simple">
+<li><p><strong>macOS</strong>: <code class="docutils literal notranslate"><span class="pre">~/Library/Application</span> <span class="pre">Support/Claude/claude_desktop_config.json</span></code></p></li>
+<li><p><strong>Windows</strong>: <code class="docutils literal notranslate"><span class="pre">%APPDATA%\Claude\claude_desktop_config.json</span></code></p></li>
+<li><p><strong>Linux</strong>: <code class="docutils literal notranslate"><span class="pre">~/.config/Claude/claude_desktop_config.json</span></code></p></li>
+</ul>
+<p><strong>Usage Examples in Claude:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">Download</span> <span class="n">this</span> <span class="n">paper</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="mf">2103.00020</span><span class="o">.</span><span class="n">pdf</span>
+</span><span id="line-2"><span class="n">Context</span><span class="p">:</span> <span class="s2">"Attention is All You Need paper"</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="n">I</span> <span class="n">need</span> <span class="n">these</span> <span class="n">papers</span><span class="p">:</span>
+</span><span id="line-5"><span class="mf">1.</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="mf">2103.00020</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span> <span class="s2">"Attention Paper"</span>
+</span><span id="line-6"><span class="mf">2.</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="mf">1706.03762</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span> <span class="s2">"Transformer Original"</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="n">Show</span> <span class="n">me</span> <span class="n">what</span> <span class="n">PDFs</span> <span class="n">I</span><span class="s1">'ve downloaded</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="chatgpt-custom-gpt-integration">
+<h3>ChatGPT Custom GPT Integration<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#chatgpt-custom-gpt-integration" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#chatgpt-custom-gpt-integration'">¶</a></h3>
+<ol class="arabic">
+<li><p>Create API server script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">python<span class="w"> </span>scripts/deploy_api.py<span class="w"> </span>DownloadAgent<span class="w"> </span>--output<span class="w"> </span>~/api_download.py
+</span><span id="line-2">python<span class="w"> </span>~/api_download.py
+</span></code></pre></div>
+</div>
+</li>
+<li><p>Create Custom GPT at https://chat.openai.com/gpts/editor</p></li>
+<li><p>Add actions using schema from: <code class="docutils literal notranslate"><span class="pre">http://localhost:8000/openapi.json</span></code></p></li>
+<li><p>For remote access, deploy to cloud or use ngrok:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">ngrok<span class="w"> </span>http<span class="w"> </span><span class="m">8000</span>
+</span></code></pre></div>
+</div>
+</li>
+</ol>
+<p><strong>Usage Examples in ChatGPT:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">Download this dataset: https://github.com/user/repo/blob/main/data.csv
+</span><span id="line-2">Context: "Sales Data Q4 2024"
+</span><span id="line-3">
+</span><span id="line-4">Can you download these research papers for me?
+</span><span id="line-5">[List of URLs with contexts]
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#troubleshooting" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#troubleshooting'">¶</a></h2>
+<section id="installation-issues">
+<h3>Installation Issues<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#installation-issues" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#installation-issues'">¶</a></h3>
+<p><strong>Problem</strong>: Module not found errors</p>
+<p><strong>Solution</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Update pip and reinstall</span>
+</span><span id="line-2">pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</span><span id="line-3">pip<span class="w"> </span>uninstall<span class="w"> </span>aw-agents
+</span><span id="line-4">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>all<span class="o">]</span>
+</span></code></pre></div>
+</div>
+<p><strong>Problem</strong>: Missing dependencies</p>
+<p><strong>Solution</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Install specific feature sets</span>
+</span><span id="line-2">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>mcp<span class="o">]</span><span class="w">    </span><span class="c1"># For Claude</span>
+</span><span id="line-3">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>api<span class="o">]</span><span class="w">    </span><span class="c1"># For ChatGPT</span>
+</span><span id="line-4">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>all<span class="o">]</span><span class="w">    </span><span class="c1"># Everything</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="claude-desktop-issues">
+<h3>Claude Desktop Issues<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#claude-desktop-issues" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#claude-desktop-issues'">¶</a></h3>
+<p><strong>Problem</strong>: Claude doesn’t see the download tools</p>
+<p><strong>Solution</strong>:</p>
+<ol class="arabic simple">
+<li><p>Verify config file location (see paths above)</p></li>
+<li><p>Use absolute path in config (not <code class="docutils literal notranslate"><span class="pre">~/</span></code> or <code class="docutils literal notranslate"><span class="pre">./</span></code>)</p></li>
+<li><p>Check logs: <code class="docutils literal notranslate"><span class="pre">~/Library/Logs/Claude/</span></code> (macOS)</p></li>
+<li><p>Restart Claude Desktop completely (Quit, not just close window)</p></li>
+<li><p>Verify Python environment: <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">python</span></code></p></li>
+</ol>
+<p><strong>Problem</strong>: “Module not found” when Claude tries to use agent</p>
+<p><strong>Solution</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Install in the Python environment Claude uses</span>
+</span><span id="line-2">which<span class="w"> </span>python<span class="w">  </span><span class="c1"># Check which Python Claude is using</span>
+</span><span id="line-3"><span class="c1"># Use that Python to install dependencies</span>
+</span><span id="line-4">/path/to/python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mcp<span class="w"> </span>requests<span class="w"> </span>beautifulsoup4<span class="w"> </span>graze
+</span></code></pre></div>
+</div>
+</section>
+<section id="chatgpt-custom-gpt-issues">
+<h3>ChatGPT Custom GPT Issues<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#chatgpt-custom-gpt-issues" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#chatgpt-custom-gpt-issues'">¶</a></h3>
+<p><strong>Problem</strong>: Actions can’t connect to localhost</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li><p>ChatGPT servers can’t access <code class="docutils literal notranslate"><span class="pre">localhost</span></code> from OpenAI’s infrastructure</p></li>
+<li><p>Options:</p>
+<ol class="arabic">
+<li><p><strong>For testing</strong>: Use ngrok to expose local server</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">ngrok<span class="w"> </span>http<span class="w"> </span><span class="m">8000</span>
+</span><span id="line-2"><span class="c1"># Use the ngrok URL in your Custom GPT actions</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p><strong>For production</strong>: Deploy to cloud service (AWS, GCP, Azure, Heroku)</p></li>
+<li><p><strong>Same network</strong>: Use your local IP address</p></li>
+</ol>
+</li>
+</ul>
+<p><strong>Problem</strong>: Schema import fails</p>
+<p><strong>Solution</strong>:</p>
+<ol class="arabic simple">
+<li><p>Ensure server is running: <code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">http://localhost:8000/openapi.json</span></code></p></li>
+<li><p>Check for CORS issues (FastAPI handles this by default)</p></li>
+<li><p>Try manual schema paste instead of URL import</p></li>
+</ol>
+</section>
+<section id="general-issues">
+<h3>General Issues<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#general-issues" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#general-issues'">¶</a></h3>
+<p><strong>Problem</strong>: Downloads failing</p>
+<p><strong>Solution</strong>:</p>
+<ol class="arabic simple">
+<li><p>Check internet connection</p></li>
+<li><p>Verify URL is accessible: <code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">-I</span> <span class="pre">[URL]</span></code></p></li>
+<li><p>Some sites may block automated downloads</p></li>
+<li><p>Check download directory permissions</p></li>
+</ol>
+<p><strong>Problem</strong>: Import errors in Python</p>
+<p><strong>Solution</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Verify installation</span>
+</span><span id="line-2">python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"from aw_agents.agents.download import DownloadAgent; print('✓ Success')"</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Reinstall if needed</span>
+</span><span id="line-5">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>all<span class="o">]</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="development">
+<h2>Development<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#development" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#development'">¶</a></h2>
+<section id="running-tests">
+<h3>Running Tests<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#running-tests" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#running-tests'">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">pytest
+</span></code></pre></div>
+</div>
+</section>
+<section id="code-quality">
+<h3>Code Quality<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#code-quality" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#code-quality'">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Format code</span>
+</span><span id="line-2">black<span class="w"> </span>aw_agents<span class="w"> </span>tests
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Lint</span>
+</span><span id="line-5">ruff<span class="w"> </span>aw_agents<span class="w"> </span>tests
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># Type check</span>
+</span><span id="line-8">mypy<span class="w"> </span>aw_agents
+</span></code></pre></div>
+</div>
+</section>
+<section id="adding-a-new-agent">
+<h3>Adding a New Agent<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#adding-a-new-agent" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#adding-a-new-agent'">¶</a></h3>
+<ol class="arabic">
+<li><p>Create a new directory in <code class="docutils literal notranslate"><span class="pre">aw_agents/</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">aw_agents/myagent/
+</span><span id="line-2">├── __init__.py
+</span><span id="line-3">├── agent.py
+</span><span id="line-4">└── core.py (if needed)
+</span></code></pre></div>
+</div>
+</li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> in <code class="docutils literal notranslate"><span class="pre">agent.py</span></code></p></li>
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">aw_agents/__init__.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.myagent</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyAgent</span>
+</span><span id="line-2"><span class="n">__all__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'MyAgent'</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</li>
+<li><p>Create tests in <code class="docutils literal notranslate"><span class="pre">tests/test_myagent.py</span></code></p></li>
+<li><p>Update documentation</p></li>
+</ol>
+</section>
+</section>
+<section id="roadmap">
+<h2>Roadmap<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#roadmap" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#roadmap'">¶</a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Additional built-in agents (research, data prep, etc.)</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Support for more platforms (Slack, Discord, etc.)</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Agent composition and chaining</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Persistent state management</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Authentication and authorization</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>Web UI for agent management</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"/>CLI tools for deployment</p></li>
+</ul>
+</section>
+<section id="contributing">
+<h2>Contributing<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#contributing" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#contributing'">¶</a></h2>
+<p>Contributions welcome! Please:</p>
+<ol class="arabic simple">
+<li><p>Fork the repo</p></li>
+<li><p>Create a feature branch</p></li>
+<li><p>Add tests for new features</p></li>
+<li><p>Ensure all tests pass</p></li>
+<li><p>Submit a pull request</p></li>
+</ol>
+</section>
+<section id="license">
+<h2>License<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#license" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#license'">¶</a></h2>
+<p>MIT License - see LICENSE file for details</p>
+</section>
+<section id="credits">
+<h2>Credits<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#credits" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#credits'">¶</a></h2>
+<p>Built with:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/i2mint/dol" rel="nofollow noopener">dol<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> - Storage abstractions</p></li>
+<li><p><a class="reference external" href="https://github.com/thorwhalen/graze" rel="nofollow noopener">graze<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> - Download and caching</p></li>
+<li><p><a class="reference external" href="https://modelcontextprotocol.io/" rel="nofollow noopener">MCP<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> - Model Context Protocol</p></li>
+<li><p><a class="reference external" href="https://fastapi.tiangolo.com/" rel="nofollow noopener">FastAPI<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> - Modern web framework</p></li>
+</ul>
+<p>Part of the <a class="reference external" href="https://github.com/thorwhalen" rel="nofollow noopener">thorwhalen<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> ecosystem.</p>
+<p class="epythet-aggregates">This documentation as a single file: <a href="aw_agents.md">aw_agents.md</a> (Markdown, for agents).</p>
+
+</section>
+</section>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 14:05 UTC from <a href="https://github.com/addaix/aw_agents/commit/c4479b410c5ce94eb6041cf7d9da149d0d8d287b">c4479b4</a> (main) · aw_agents 0.1.3 · <a href="about-this-build.html">about this build</a></p>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#overview'" class="reference internal" href="#overview">Overview</a><ul>
+<li><a :data-current="activeSection === '#key-features'" class="reference internal" href="#key-features">Key Features</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#documentation'" class="reference internal" href="#documentation">Documentation</a></li>
+<li><a :data-current="activeSection === '#installation'" class="reference internal" href="#installation">Installation</a><ul>
+<li><a :data-current="activeSection === '#verify-installation'" class="reference internal" href="#verify-installation">Verify Installation</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#quick-start'" class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li><a :data-current="activeSection === '#easiest-way-run-agent-as-server'" class="reference internal" href="#easiest-way-run-agent-as-server">Easiest Way: Run Agent as Server</a></li>
+<li><a :data-current="activeSection === '#using-the-download-agent'" class="reference internal" href="#using-the-download-agent">Using the Download Agent</a></li>
+<li><a :data-current="activeSection === '#deploy-to-claude-desktop-mcp'" class="reference internal" href="#deploy-to-claude-desktop-mcp">Deploy to Claude Desktop (MCP)</a></li>
+<li><a :data-current="activeSection === '#deploy-to-chatgpt-custom-gpt-fastapi'" class="reference internal" href="#deploy-to-chatgpt-custom-gpt-fastapi">Deploy to ChatGPT Custom GPT (FastAPI)</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#architecture'" class="reference internal" href="#architecture">Architecture</a><ul>
+<li><a :data-current="activeSection === '#creating-your-own-agent'" class="reference internal" href="#creating-your-own-agent">Creating Your Own Agent</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#included-agents'" class="reference internal" href="#included-agents">Included Agents</a><ul>
+<li><a :data-current="activeSection === '#download-agent'" class="reference internal" href="#download-agent">Download Agent</a></li>
+<li><a :data-current="activeSection === '#customizing-extension-detection'" class="reference internal" href="#customizing-extension-detection">Customizing Extension Detection</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#integration-guides'" class="reference internal" href="#integration-guides">Integration Guides</a><ul>
+<li><a :data-current="activeSection === '#claude-desktop-integration'" class="reference internal" href="#claude-desktop-integration">Claude Desktop Integration</a></li>
+<li><a :data-current="activeSection === '#chatgpt-custom-gpt-integration'" class="reference internal" href="#chatgpt-custom-gpt-integration">ChatGPT Custom GPT Integration</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#troubleshooting'" class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li><a :data-current="activeSection === '#installation-issues'" class="reference internal" href="#installation-issues">Installation Issues</a></li>
+<li><a :data-current="activeSection === '#claude-desktop-issues'" class="reference internal" href="#claude-desktop-issues">Claude Desktop Issues</a></li>
+<li><a :data-current="activeSection === '#chatgpt-custom-gpt-issues'" class="reference internal" href="#chatgpt-custom-gpt-issues">ChatGPT Custom GPT Issues</a></li>
+<li><a :data-current="activeSection === '#general-issues'" class="reference internal" href="#general-issues">General Issues</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#development'" class="reference internal" href="#development">Development</a><ul>
+<li><a :data-current="activeSection === '#running-tests'" class="reference internal" href="#running-tests">Running Tests</a></li>
+<li><a :data-current="activeSection === '#code-quality'" class="reference internal" href="#code-quality">Code Quality</a></li>
+<li><a :data-current="activeSection === '#adding-a-new-agent'" class="reference internal" href="#adding-a-new-agent">Adding a New Agent</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#roadmap'" class="reference internal" href="#roadmap">Roadmap</a></li>
+<li><a :data-current="activeSection === '#contributing'" class="reference internal" href="#contributing">Contributing</a></li>
+<li><a :data-current="activeSection === '#license'" class="reference internal" href="#license">License</a></li>
+<li><a :data-current="activeSection === '#credits'" class="reference internal" href="#credits">Credits</a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left"></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=360bc84d"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script src="_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="_static/copybutton.js?v=fd10adb8"></script>
+<script defer="defer" src="_static/theme.js?v=49cc6205"></script>
 </body>
 </html>

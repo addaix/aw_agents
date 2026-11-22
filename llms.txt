@@ -1,0 +1,28 @@
+# aw_agents
+
+> AI agents for agentic workflows, deployable to multiple chatbot platforms
+
+
+## Pages
+
+- [aw-agents](index.html.md): &#42;&#42;AI Agents for Agentic Workflows&#42;&#42; - Easily deploy AI agents to multiple chatbot platforms (Claude,...
+- [API reference](api.html.md): | &#96;aw_agents&#96;   | aw_agents - AI Agents for Agentic Workflows   |
+- [aw_agents](_autosummary/aw_agents.html.md): aw_agents - AI Agents for Agentic Workflows
+- [aw_agents.adapters](_autosummary/aw_agents.adapters.html.md): Adapters for exposing agents to different platforms.
+- [aw_agents.adapters.mcp](_autosummary/aw_agents.adapters.mcp.html.md): MCP (Model Context Protocol) adapter for AW agents.
+- [aw_agents.adapters.openapi](_autosummary/aw_agents.adapters.openapi.html.md): OpenAPI/FastAPI adapter for AW agents.
+- [aw_agents.agents](_autosummary/aw_agents.agents.html.md): Agents for agentic workflows.
+- [aw_agents.agents.download](_autosummary/aw_agents.agents.download.html.md): Download Agent - Smart content downloader with context-aware naming.
+- [aw_agents.agents.download.agent](_autosummary/aw_agents.agents.download.agent.html.md): Download Agent - Smart content downloader with context-aware naming.
+- [aw_agents.agents.download.download_core](_autosummary/aw_agents.agents.download.download_core.html.md): Download Agent: Smart content downloader with context-aware naming and intelligent link handling.
+- [aw_agents.base](_autosummary/aw_agents.base.html.md): Base classes and protocols for AW agents.
+- [aw_agents.util](_autosummary/aw_agents.util.html.md): Utils for aw_agents
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-22 14:05 UTC&#42;&#42; from commit &lt;a href="https://github.com/add...
+
+## Optional
+
+- [aw_agents.md](aw_agents.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

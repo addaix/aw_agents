@@ -1,0 +1,18 @@
+aw\_agents.agents.download.agent
+================================
+
+.. automodule:: aw_agents.agents.download.agent
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      main
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DownloadAgent
+   
