@@ -1,25 +1,87 @@
 """
 MCP (Model Context Protocol) adapter for AW agents.
 
-This adapter wraps any AgentBase subclass to expose it as an MCP server
-for use with Claude Desktop.
+This adapter wraps any AgentBase subclass to expose it as an MCP server for use with
+Claude Desktop. The server is built by ``py2mcp`` (the fleet's MCP surface adapter, the
+same builder every other fleet MCP server goes through): each agent tool becomes one
+function whose signature is derived from the tool's JSON schema, and
+:func:`py2mcp.mk_mcp_server` turns those functions into a FastMCP server.
 """
 
-import asyncio
-from typing import Any, Dict
+import inspect
+from typing import Any, Callable, Dict, Optional
 from pathlib import Path
 
-try:
-    from mcp.server import Server
-    from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent
-
-    MCP_AVAILABLE = True
-except ImportError:
-    MCP_AVAILABLE = False
-    print("Warning: mcp package not installed. Install with: pip install mcp")
-
 from aw_agents.base import AgentBase
+
+#: JSON-schema ``type`` -> the Python annotation FastMCP turns back into that type.
+_JSON_TYPES: Dict[str, Any] = {
+    "string": str,
+    "integer": int,
+    "number": float,
+    "boolean": bool,
+    "array": list,
+    "object": dict,
+}
+
+
+def _format_success_response(result: Dict[str, Any]) -> str:
+    """Format a successful tool execution response."""
+    parts = []
+
+    if result.get("message"):
+        parts.append(f"✓ {result['message']}")
+    else:
+        parts.append("✓ Operation completed successfully")
+
+    # Add data if present
+    if result.get("data"):
+        parts.append("")
+        parts.append(str(result["data"]))
+
+    # Add warnings if present
+    if result.get("warnings"):
+        parts.append("")
+        parts.append("Warnings:")
+        for warning in result["warnings"]:
+            parts.append(f"  • {warning}")
+
+    return "\n".join(parts)
+
+
+def _format_error_response(result: Dict[str, Any]) -> str:
+    """Format an error response."""
+    message = result.get("message", "Unknown error")
+    return f"❌ Error: {message}"
+
+
+def _signature_from_schema(schema: Dict[str, Any]) -> inspect.Signature:
+    """A keyword-only signature for a tool's JSON-schema ``parameters``.
+
+    Required properties have no default; optional ones default to the schema's
+    ``default`` (else ``None``).
+
+    >>> str(_signature_from_schema({"properties": {"url": {"type": "string"}, "n": {"type": "integer"}}, "required": ["url"]}))
+    '(*, url: str, n: Optional[int] = None)'
+    """
+    required = set(schema.get("required", []))
+    params = []
+    for name, spec in schema.get("properties", {}).items():
+        annotation = _JSON_TYPES.get(spec.get("type"), Any)
+        if name in required:
+            default = inspect.Parameter.empty
+        else:
+            default = spec.get("default")
+            annotation = Optional[annotation]
+        params.append(
+            inspect.Parameter(
+                name,
+                inspect.Parameter.KEYWORD_ONLY,
+                default=default,
+                annotation=annotation,
+            )
+        )
+    return inspect.Signature(params)
 
 
 class MCPAdapter:
@@ -29,103 +91,61 @@ class MCPAdapter:
     Usage:
         agent = YourAgent()
         adapter = MCPAdapter(agent, server_name="your-agent")
-        adapter.run()
+        adapter.run_sync()
+
+    ``adapter.server`` is the ``py2mcp`` (FastMCP) server; ``adapter.tools`` the functions
+    it serves, one per agent tool.
     """
 
-    def __init__(self, agent: AgentBase, server_name: str):
+    def __init__(self, agent: AgentBase, server_name: str, **server_options):
         """
         Initialize MCP adapter.
 
         Args:
             agent: Agent instance to wrap
             server_name: Name for the MCP server
+            **server_options: Forwarded to :func:`py2mcp.mk_mcp_server` (``instructions``,
+                ``middleware``, ``annotations``...)
         """
-        if not MCP_AVAILABLE:
-            raise ImportError("mcp package required. Install with: pip install mcp")
+        from py2mcp import mk_mcp_server
 
         self.agent = agent
-        self.server = Server(server_name)
-        self._setup_handlers()
+        self.tools = [self._mk_tool(tool) for tool in agent.get_tools()]
+        self.server = mk_mcp_server(self.tools, name=server_name, **server_options)
 
-    def _setup_handlers(self):
-        """Set up MCP server handlers."""
+    def _mk_tool(self, tool: Dict[str, Any]) -> Callable[..., str]:
+        """The function that serves one agent tool: arguments in, formatted text out."""
+        name = tool["name"]
 
-        @self.server.list_tools()
-        async def list_tools() -> list[Tool]:
-            """List available tools from the agent."""
-            agent_tools = self.agent.get_tools()
-
-            mcp_tools = []
-            for tool in agent_tools:
-                mcp_tools.append(
-                    Tool(
-                        name=tool["name"],
-                        description=tool["description"],
-                        inputSchema=tool["parameters"],
-                    )
-                )
-
-            return mcp_tools
-
-        @self.server.call_tool()
-        async def call_tool(name: str, arguments: dict) -> list[TextContent]:
-            """Handle tool calls from Claude."""
+        def call(**arguments):
             try:
+                arguments = {k: v for k, v in arguments.items() if v is not None}
                 result = self.agent.execute_tool(name, arguments)
-
-                # Format response based on result
                 if result["success"]:
-                    response_text = self._format_success_response(result)
-                else:
-                    response_text = self._format_error_response(result)
-
-                return [TextContent(type="text", text=response_text)]
-
+                    return self._format_success_response(result)
+                return self._format_error_response(result)
             except Exception as e:
-                return [
-                    TextContent(
-                        type="text", text=f"❌ Error executing {name}:\n{str(e)}"
-                    )
-                ]
+                return f"❌ Error executing {name}:\n{str(e)}"
 
-    def _format_success_response(self, result: Dict[str, Any]) -> str:
-        """Format a successful tool execution response."""
-        parts = []
+        call.__name__ = call.__qualname__ = name
+        call.__doc__ = tool["description"]
+        signature = _signature_from_schema(tool["parameters"])
+        call.__signature__ = signature
+        call.__annotations__ = {
+            p.name: p.annotation for p in signature.parameters.values()
+        } | {"return": str}
+        return call
 
-        if result.get("message"):
-            parts.append(f"✓ {result['message']}")
-        else:
-            parts.append("✓ Operation completed successfully")
-
-        # Add data if present
-        if result.get("data"):
-            parts.append("")
-            parts.append(str(result["data"]))
-
-        # Add warnings if present
-        if result.get("warnings"):
-            parts.append("")
-            parts.append("Warnings:")
-            for warning in result["warnings"]:
-                parts.append(f"  • {warning}")
-
-        return "\n".join(parts)
-
-    def _format_error_response(self, result: Dict[str, Any]) -> str:
-        """Format an error response."""
-        message = result.get("message", "Unknown error")
-        return f"❌ Error: {message}"
-
-    async def run(self):
-        """Run the MCP server."""
-        async with stdio_server() as (read_stream, write_stream):
-            await self.server.run(
-                read_stream, write_stream, self.server.create_initialization_options()
-            )
+    _format_success_response = staticmethod(_format_success_response)
+    _format_error_response = staticmethod(_format_error_response)
 
     def run_sync(self):
-        """Run the MCP server (synchronous wrapper)."""
-        asyncio.run(self.run())
+        """Run the MCP server over stdio (blocking)."""
+        self.server.run()
+
+    async def run(self):
+        """Run the MCP server over stdio (awaitable)."""
+        await self.server.run_stdio_async()
 
 
 def create_mcp_server_script(agent_class, server_name: str, output_path: Path):
