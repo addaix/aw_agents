@@ -22,7 +22,7 @@ def check_dependencies():
     print_section("Checking Dependencies")
 
     required = ["requests", "beautifulsoup4", "graze"]
-    optional_mcp = ["mcp"]
+    optional_mcp = ["py2mcp"]
     optional_api = ["fastapi", "uvicorn", "pydantic"]
 
     missing = []
