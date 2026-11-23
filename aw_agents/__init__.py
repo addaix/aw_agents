@@ -23,7 +23,9 @@ Example:
 try:
     from importlib.metadata import PackageNotFoundError, version as _pkg_version
 
-    __version__ = _pkg_version("aw_agents")  # single source of truth: pyproject metadata
+    __version__ = _pkg_version(
+        "aw_agents"
+    )  # single source of truth: pyproject metadata
 except PackageNotFoundError:  # source tree that is not installed
     __version__ = "0+unknown"
 

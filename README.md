@@ -84,16 +84,16 @@ agent = DownloadAgent()
 
 # Get available tools
 tools = agent.get_tools()
-print([t['name'] for t in tools])
+print([t["name"] for t in tools])
 # ['download_content', 'download_multiple', 'list_downloads']
 
 # Execute a tool
-result = agent.execute_tool('download_content', {
-    'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-    'context': 'Important ML Paper'
-})
+result = agent.execute_tool(
+    "download_content",
+    {"url": "https://arxiv.org/pdf/2103.00020.pdf", "context": "Important ML Paper"},
+)
 
-print(result['data']['path'])  # ~/Downloads/Important_ML_Paper.pdf
+print(result["data"]["path"])  # ~/Downloads/Important_ML_Paper.pdf
 ```
 
 ### Deploy to Claude Desktop (MCP)
@@ -126,16 +126,13 @@ mcp = claude_desktop_config()
 list(mcp)  # ['download', 'other_server', ...]
 
 # Add a new server manually
-mcp['my_agent'] = {
-    'command': 'python',
-    'args': ['/path/to/my_agent.py']
-}
+mcp["my_agent"] = {"command": "python", "args": ["/path/to/my_agent.py"]}
 
 # Remove a server
-del mcp['old_server']
+del mcp["old_server"]
 
 # View a server's config
-print(mcp['download'])
+print(mcp["download"])
 ```
 
 **Manual Setup (Alternative):**
@@ -169,10 +166,7 @@ Using `claude_desktop_config()`:
 from aw.util import claude_desktop_config
 
 mcp = claude_desktop_config()
-mcp['download'] = {
-    'command': 'python',
-    'args': ['/absolute/path/to/mcp_download.py']
-}
+mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
 ```
 
 Or manually edit the config file:
@@ -300,40 +294,37 @@ aw_agents/
 ```python
 from aw_agents.base import AgentBase, ToolExecutionResult, create_json_schema
 
+
 class MyAgent(AgentBase):
     """My custom agent."""
-    
+
     def get_tools(self):
         return [
             {
-                'name': 'my_tool',
-                'description': 'Does something useful',
-                'parameters': create_json_schema(
+                "name": "my_tool",
+                "description": "Does something useful",
+                "parameters": create_json_schema(
                     properties={
-                        'input': {
-                            'type': 'string',
-                            'description': 'Input text'
-                        }
+                        "input": {"type": "string", "description": "Input text"}
                     },
-                    required=['input']
-                )
+                    required=["input"],
+                ),
             }
         ]
-    
+
     def execute_tool(self, name, arguments):
-        if name == 'my_tool':
+        if name == "my_tool":
             # Your logic here
-            result = self._process(arguments['input'])
-            
+            result = self._process(arguments["input"])
+
             return ToolExecutionResult.success_result(
-                data={'output': result},
-                message="Processed successfully"
+                data={"output": result}, message="Processed successfully"
             ).to_dict()
-        
+
         return ToolExecutionResult.error_result(
             message=f"Unknown tool: {name}"
         ).to_dict()
-    
+
     def _process(self, input_text):
         # Your implementation
         return input_text.upper()
@@ -344,11 +335,13 @@ Then deploy it:
 ```python
 # For Claude
 from aw_agents.adapters import MCPAdapter
+
 adapter = MCPAdapter(MyAgent(), "my-agent")
 adapter.run_sync()
 
 # For ChatGPT
 from aw_agents.adapters import OpenAPIAdapter
+
 adapter = OpenAPIAdapter(MyAgent())
 adapter.run(port=8001)
 ```
@@ -380,29 +373,30 @@ from aw_agents.agents.download import DownloadAgent
 agent = DownloadAgent()
 
 # Download with context-aware naming
-result = agent.execute_tool('download_content', {
-    'url': 'https://github.com/user/repo/blob/main/data.csv',
-    'context': 'Dataset for analysis'
-})
+result = agent.execute_tool(
+    "download_content",
+    {
+        "url": "https://github.com/user/repo/blob/main/data.csv",
+        "context": "Dataset for analysis",
+    },
+)
 # Automatically converts to raw.githubusercontent.com
 # Saves as: Dataset_for_analysis.csv
 
 # Download multiple files
-result = agent.execute_tool('download_multiple', {
-    'urls': [
-        'https://arxiv.org/pdf/2103.00020.pdf',
-        'https://arxiv.org/pdf/1706.03762.pdf'
-    ],
-    'contexts': [
-        'Attention Paper',
-        'Transformer Original'
-    ]
-})
+result = agent.execute_tool(
+    "download_multiple",
+    {
+        "urls": [
+            "https://arxiv.org/pdf/2103.00020.pdf",
+            "https://arxiv.org/pdf/1706.03762.pdf",
+        ],
+        "contexts": ["Attention Paper", "Transformer Original"],
+    },
+)
 
 # List downloaded PDFs
-result = agent.execute_tool('list_downloads', {
-    'pattern': '*.pdf'
-})
+result = agent.execute_tool("list_downloads", {"pattern": "*.pdf"})
 ```
 
 **Smart Features:**
@@ -410,48 +404,56 @@ result = agent.execute_tool('list_downloads', {
 1. **Intelligent Extension Detection**:
    ```python
    # Priority-based routing handles edge cases correctly
-   agent.execute_tool('download_content', {
-       'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-       'context': 'ML Paper'
-   })
+   agent.execute_tool(
+       "download_content",
+       {"url": "https://arxiv.org/pdf/2103.00020.pdf", "context": "ML Paper"},
+   )
    # Result: ML_Paper.pdf ✓ (not .html despite Content-Type header)
-   
+
    # Explicit extension override
-   agent.execute_tool('download_content', {
-       'url': 'https://example.com/ambiguous_file',
-       'context': 'Data',
-       'explicit_extension': 'csv'
-   })
+   agent.execute_tool(
+       "download_content",
+       {
+           "url": "https://example.com/ambiguous_file",
+           "context": "Data",
+           "explicit_extension": "csv",
+       },
+   )
    # Result: Data.csv
    ```
 
 2. **Landing Page Detection**:
    ```python
    # Input: Landing page URL
-   agent.execute_tool('download_content', {
-       'url': 'https://papers.nips.cc/paper/2017/hash/xxx-Abstract.html'
-   })
+   agent.execute_tool(
+       "download_content",
+       {"url": "https://papers.nips.cc/paper/2017/hash/xxx-Abstract.html"},
+   )
    # Agent detects HTML, finds PDF link, downloads PDF, warns about redirect
    ```
 
 3. **GitHub URL Handling**:
    ```python
    # Input: GitHub blob URL
-   'https://github.com/user/repo/blob/main/data.csv'
-   # Converts to: 
-   'https://raw.githubusercontent.com/user/repo/main/data.csv'
+   "https://github.com/user/repo/blob/main/data.csv"
+
+   # Converts to:
+   "https://raw.githubusercontent.com/user/repo/main/data.csv"
    ```
 
 4. **Context-Aware Naming**:
    ```python
    # Without context:
    # Filename: 2103.00020.pdf
-   
+
    # With context:
-   agent.execute_tool('download_content', {
-       'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-       'context': 'Attention is All You Need - Transformer Paper'
-   })
+   agent.execute_tool(
+       "download_content",
+       {
+           "url": "https://arxiv.org/pdf/2103.00020.pdf",
+           "context": "Attention is All You Need - Transformer Paper",
+       },
+   )
    # Filename: Attention_is_All_You_Need_Transformer_Paper.pdf
    ```
 
@@ -469,13 +471,15 @@ print(router.content_type_map)
 print(router.priority_extensions)
 
 # Customize mappings
-router.content_type_map['text/x-log'] = '.log'
+router.content_type_map["text/x-log"] = ".log"
+
 
 # Add custom detection strategy
 def detect_special(ctx):
-    if 'special' in ctx.url:
-        return '.special'
+    if "special" in ctx.url:
+        return ".special"
     return None
+
 
 custom_router = router.with_prepended_strategy(detect_special)
 
@@ -508,12 +512,9 @@ The agent automatically adds itself to your Claude Desktop config. Just restart 
 2. Add to Claude Desktop config using `claude_desktop_config()`:
    ```python
    from aw.util import claude_desktop_config
-   
+
    mcp = claude_desktop_config()
-   mcp['download'] = {
-       'command': 'python',
-       'args': ['/absolute/path/to/mcp_download.py']
-   }
+   mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
    ```
 
 3. Restart Claude Desktop
@@ -529,10 +530,10 @@ mcp = claude_desktop_config()
 list(mcp)  # ['download', 'other_server', ...]
 
 # View a server's config
-print(mcp['download'])
+print(mcp["download"])
 
 # Remove a server
-del mcp['old_server']
+del mcp["old_server"]
 ```
 
 **Config file locations:**
@@ -704,7 +705,8 @@ mypy aw_agents
 3. Add to `aw_agents/__init__.py`:
    ```python
    from aw_agents.myagent import MyAgent
-   __all__.append('MyAgent')
+
+   __all__.append("MyAgent")
    ```
 
 4. Create tests in `tests/test_myagent.py`

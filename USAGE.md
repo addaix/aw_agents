@@ -32,7 +32,7 @@ from aw.util import claude_desktop_config
 
 mcp = claude_desktop_config()
 list(mcp)  # See all configured servers
-del mcp['download']  # Remove a server
+del mcp["download"]  # Remove a server
 ```
 
 #### For ChatGPT (FastAPI Server)
@@ -113,15 +113,15 @@ agent = DownloadAgent()
 
 # Get available tools
 tools = agent.get_tools()
-print([t['name'] for t in tools])
+print([t["name"] for t in tools])
 
 # Execute a tool
-result = agent.execute_tool('download_content', {
-    'url': 'https://example.com/file.pdf',
-    'context': 'Important Document'
-})
+result = agent.execute_tool(
+    "download_content",
+    {"url": "https://example.com/file.pdf", "context": "Important Document"},
+)
 
-if result['success']:
+if result["success"]:
     print(f"Downloaded to: {result['data']['path']}")
 ```
 

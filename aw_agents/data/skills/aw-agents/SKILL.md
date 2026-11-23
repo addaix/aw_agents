@@ -25,12 +25,16 @@ The base package is the download engine (it needs `requests`). The extras add th
 ```python
 from aw_agents.agents.download.download_core import DownloadEngine, download_content
 
-path = download_content("https://arxiv.org/abs/1706.03762", context="attention is all you need")
+path = download_content(
+    "https://arxiv.org/abs/1706.03762", context="attention is all you need"
+)
 
-engine = DownloadEngine(default_download_dir="data/raw")      # default: ~/Downloads
-result = engine.download(url, context="UCI adult dataset", filename=None, force_redownload=False)
+engine = DownloadEngine(default_download_dir="data/raw")  # default: ~/Downloads
+result = engine.download(
+    url, context="UCI adult dataset", filename=None, force_redownload=False
+)
 result["path"], result["url"], result["warnings"], result["metadata"]
-engine.download_multiple(urls)                                 # one result per URL
+engine.download_multiple(urls)  # one result per URL
 ```
 
 What it does for you: detects an HTML landing page and follows the real download link; rewrites GitHub and Hugging Face page URLs to their raw files; infers the extension from the content type when the URL has none; builds the file name from `context`. Read `result["warnings"]`: a landing page it could not resolve is reported there, not raised.
@@ -48,25 +52,40 @@ Its tools: `download_content` (`url`, optional `context`, `download_dir`, `filen
 ## Write a new agent
 
 ```python
-from aw_agents import AgentBase, ToolExecutionResult, create_json_schema, MCPAdapter, OpenAPIAdapter
+from aw_agents import (
+    AgentBase,
+    ToolExecutionResult,
+    create_json_schema,
+    MCPAdapter,
+    OpenAPIAdapter,
+)
+
 
 class WordCount(AgentBase):
     """Count words in a text."""
 
     def get_tools(self):
-        return [{
-            "name": "count_words",
-            "description": "Count the words in a text.",
-            "parameters": create_json_schema({"text": {"type": "string", "description": "The text"}}, required=["text"]),
-        }]
+        return [
+            {
+                "name": "count_words",
+                "description": "Count the words in a text.",
+                "parameters": create_json_schema(
+                    {"text": {"type": "string", "description": "The text"}},
+                    required=["text"],
+                ),
+            }
+        ]
 
     def execute_tool(self, name, arguments):
         if name != "count_words":
             return ToolExecutionResult.error_result(f"unknown tool {name!r}").to_dict()
-        return ToolExecutionResult.success_result(len(arguments["text"].split())).to_dict()
+        return ToolExecutionResult.success_result(
+            len(arguments["text"].split())
+        ).to_dict()
 
-MCPAdapter(WordCount(), "word-count").run_sync()                 # Claude
-OpenAPIAdapter(WordCount(), title="Word count").run(port=8000)   # ChatGPT
+
+MCPAdapter(WordCount(), "word-count").run_sync()  # Claude
+OpenAPIAdapter(WordCount(), title="Word count").run(port=8000)  # ChatGPT
 ```
 
 `execute_tool` returns a dict with at least `success` and `data` (`message` and `warnings` optional); `ToolExecutionResult` builds it. `create_mcp_server_script(agent_class, name, path)` and `create_api_server_script(agent_class, path)` write a standalone launcher script.

@@ -245,6 +245,7 @@ Phase 4: Extract to Core
 3. **Test it**:
    ```python
    from aw_agents.agents.download import DownloadAgent
+
    agent = DownloadAgent()
    # ... test it
    ```

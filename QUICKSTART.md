@@ -16,13 +16,16 @@ from aw_agents.agents.download import DownloadAgent
 agent = DownloadAgent()
 
 # Download a file
-result = agent.execute_tool('download_content', {
-    'url': 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    'context': 'Test PDF Document'
-})
+result = agent.execute_tool(
+    "download_content",
+    {
+        "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "context": "Test PDF Document",
+    },
+)
 
 print(f"Success: {result['success']}")
-if result['success']:
+if result["success"]:
     print(f"Downloaded to: {result['data']['path']}")
 ```
 
@@ -59,12 +62,9 @@ That's it! The agent will:
    
    ```python
    from aw.util import claude_desktop_config
-   
+
    mcp = claude_desktop_config()
-   mcp['download'] = {
-       'command': 'python',
-       'args': ['/absolute/path/to/mcp_download.py']
-   }
+   mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
    ```
 
 3. **Restart Claude Desktop**

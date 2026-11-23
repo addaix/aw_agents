@@ -96,12 +96,15 @@ aw_agents/
 from aw_agents.download import DownloadAgent
 
 agent = DownloadAgent()
-result = agent.execute_tool('download_content', {
-    'url': 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    'context': 'Test Document'
-})
+result = agent.execute_tool(
+    "download_content",
+    {
+        "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "context": "Test Document",
+    },
+)
 
-print(result['data']['path'])  # Downloaded file path
+print(result["data"]["path"])  # Downloaded file path
 ```
 
 ### 2. Try the Interactive Demo
@@ -128,10 +131,7 @@ The agent automatically adds itself to Claude Desktop config. Just restart Claud
 from aw.util import claude_desktop_config
 
 mcp = claude_desktop_config()
-mcp['download'] = {
-    'command': 'python',
-    'args': ['/absolute/path/to/mcp_download.py']
-}
+mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
 ```
 
 **Important**: Install MCP first: `pip install mcp`

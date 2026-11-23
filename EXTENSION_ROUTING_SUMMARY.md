@@ -6,7 +6,7 @@ The DownloadAgent was incorrectly assigning file extensions based solely on the 
 
 **Bug Example:**
 ```python
-agent.download('https://arxiv.org/pdf/2103.00020.pdf', context='Important ML Paper')
+agent.download("https://arxiv.org/pdf/2103.00020.pdf", context="Important ML Paper")
 # Result: Important_ML_Paper.html  ❌ (should be .pdf)
 ```
 
@@ -53,7 +53,7 @@ print(router.content_type_map)
 # {'application/pdf': '.pdf', 'text/html': '.html', ...}
 
 # Modify mappings
-router.content_type_map['text/x-log'] = '.log'
+router.content_type_map["text/x-log"] = ".log"
 
 # Inspect priority extensions
 print(router.priority_extensions)
@@ -65,11 +65,13 @@ print(router.priority_extensions)
 ```python
 from aw.routing import ExtensionRouter
 
+
 # Add custom detection strategy
 def detect_special(ctx):
-    if 'special' in ctx.url:
-        return '.special'
+    if "special" in ctx.url:
+        return ".special"
     return None
+
 
 # Create new router with custom strategy
 custom_router = router.with_prepended_strategy(detect_special)
@@ -83,9 +85,9 @@ engine = DownloadEngine(extension_router=custom_router)
 ```python
 # User can explicitly specify extension
 engine.download(
-    url='https://example.com/ambiguous_file',
-    context='MyData',
-    explicit_extension='json'  # Forces .json extension
+    url="https://example.com/ambiguous_file",
+    context="MyData",
+    explicit_extension="json",  # Forces .json extension
 )
 ```
 
@@ -165,22 +167,26 @@ from aw_agents import DownloadAgent
 agent = DownloadAgent()
 
 # Basic download (now works correctly!)
-result = agent.execute_tool('download_content', {
-    'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-    'context': 'ML Paper'
-})
+result = agent.execute_tool(
+    "download_content",
+    {"url": "https://arxiv.org/pdf/2103.00020.pdf", "context": "ML Paper"},
+)
 # → ML_Paper.pdf ✅
 
 # With explicit extension
-result = agent.execute_tool('download_content', {
-    'url': 'https://example.com/data',
-    'context': 'Dataset',
-    'explicit_extension': 'csv'
-})
+result = agent.execute_tool(
+    "download_content",
+    {
+        "url": "https://example.com/data",
+        "context": "Dataset",
+        "explicit_extension": "csv",
+    },
+)
 # → Dataset.csv
 
 # Custom router
 from aw.routing import ExtensionRouter
-router = ExtensionRouter(priority_extensions=frozenset(['.json', '.xml']))
+
+router = ExtensionRouter(priority_extensions=frozenset([".json", ".xml"]))
 agent = DownloadAgent(extension_router=router)
 ```
