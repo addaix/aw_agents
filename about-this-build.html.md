@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 14:05 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/c4479b410c5ce94eb6041cf7d9da149d0d8d287b"><code>c4479b4</code></a> on branch <code>main</code>, for **aw_agents 0.1.3** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 02:01 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/3f3aa169c8541df5db47bfb2ba94b9a05c6e9ac2"><code>3f3aa16</code></a> on branch <code>main</code>, for **aw_agents 0.1.3** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/aw_agents/commit/c4479b410c5ce94eb6041cf7d9da149d0d8d287b"><code>c4479b410c5ce94eb6041cf7d9da149d0d8d287b</code></a> |
+| Commit              | <a href="https://github.com/addaix/aw_agents/commit/3f3aa169c8541df5db47bfb2ba94b9a05c6e9ac2"><code>3f3aa169c8541df5db47bfb2ba94b9a05c6e9ac2</code></a> |
 | Branch              | <code>main</code>                                                                                                                                       |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/aw_agents</code>                                                              |
-| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45030772230">45030772230</a>     |
+| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45097589880">45097589880</a>     |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>c4479b410c5ce94eb6041cf7d9da149d0d8d287b</code> (in the history of the built commit) |
+| Event commit | <code>3f3aa169c8541df5db47bfb2ba94b9a05c6e9ac2</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -55,7 +55,7 @@ Latest release: <a href="https://pypi.org/project/aw_agents/0.1.3/">0.1.3</a>, t
 
 ```bash
 git clone https://github.com/addaix/aw_agents && cd aw_agents
-git checkout c4479b410c5ce94eb6041cf7d9da149d0d8d287b
+git checkout 3f3aa169c8541df5db47bfb2ba94b9a05c6e9ac2
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
