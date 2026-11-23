@@ -1,4 +1,4 @@
-> built 2026-11-23 04:52 UTC from 68b7422 (main) · aw_agents 0.1.3. Details: build_info.json
+> built 2026-11-23 07:34 UTC from be86fb2 (main) · aw_agents 0.1.4. Details: build_info.json
 
 # index.html.md
 
@@ -91,16 +91,16 @@ agent = DownloadAgent()
 
 # Get available tools
 tools = agent.get_tools()
-print([t['name'] for t in tools])
+print([t["name"] for t in tools])
 # ['download_content', 'download_multiple', 'list_downloads']
 
 # Execute a tool
-result = agent.execute_tool('download_content', {
-    'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-    'context': 'Important ML Paper'
-})
+result = agent.execute_tool(
+    "download_content",
+    {"url": "https://arxiv.org/pdf/2103.00020.pdf", "context": "Important ML Paper"},
+)
 
-print(result['data']['path'])  # ~/Downloads/Important_ML_Paper.pdf
+print(result["data"]["path"])  # ~/Downloads/Important_ML_Paper.pdf
 ```
 
 ### Deploy to Claude Desktop (MCP)
@@ -134,16 +134,13 @@ mcp = claude_desktop_config()
 list(mcp)  # ['download', 'other_server', ...]
 
 # Add a new server manually
-mcp['my_agent'] = {
-    'command': 'python',
-    'args': ['/path/to/my_agent.py']
-}
+mcp["my_agent"] = {"command": "python", "args": ["/path/to/my_agent.py"]}
 
 # Remove a server
-del mcp['old_server']
+del mcp["old_server"]
 
 # View a server's config
-print(mcp['download'])
+print(mcp["download"])
 ```
 
 **Manual Setup (Alternative):**
@@ -178,10 +175,7 @@ Using `claude_desktop_config()`:
 from aw.util import claude_desktop_config
 
 mcp = claude_desktop_config()
-mcp['download'] = {
-    'command': 'python',
-    'args': ['/absolute/path/to/mcp_download.py']
-}
+mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
 ```
 
 Or manually edit the config file:
@@ -316,40 +310,37 @@ aw_agents/
 ```python
 from aw_agents.base import AgentBase, ToolExecutionResult, create_json_schema
 
+
 class MyAgent(AgentBase):
     """My custom agent."""
-    
+
     def get_tools(self):
         return [
             {
-                'name': 'my_tool',
-                'description': 'Does something useful',
-                'parameters': create_json_schema(
+                "name": "my_tool",
+                "description": "Does something useful",
+                "parameters": create_json_schema(
                     properties={
-                        'input': {
-                            'type': 'string',
-                            'description': 'Input text'
-                        }
+                        "input": {"type": "string", "description": "Input text"}
                     },
-                    required=['input']
-                )
+                    required=["input"],
+                ),
             }
         ]
-    
+
     def execute_tool(self, name, arguments):
-        if name == 'my_tool':
+        if name == "my_tool":
             # Your logic here
-            result = self._process(arguments['input'])
-            
+            result = self._process(arguments["input"])
+
             return ToolExecutionResult.success_result(
-                data={'output': result},
-                message="Processed successfully"
+                data={"output": result}, message="Processed successfully"
             ).to_dict()
-        
+
         return ToolExecutionResult.error_result(
             message=f"Unknown tool: {name}"
         ).to_dict()
-    
+
     def _process(self, input_text):
         # Your implementation
         return input_text.upper()
@@ -360,11 +351,13 @@ Then deploy it:
 ```python
 # For Claude
 from aw_agents.adapters import MCPAdapter
+
 adapter = MCPAdapter(MyAgent(), "my-agent")
 adapter.run_sync()
 
 # For ChatGPT
 from aw_agents.adapters import OpenAPIAdapter
+
 adapter = OpenAPIAdapter(MyAgent())
 adapter.run(port=8001)
 ```
@@ -398,29 +391,30 @@ from aw_agents.agents.download import DownloadAgent
 agent = DownloadAgent()
 
 # Download with context-aware naming
-result = agent.execute_tool('download_content', {
-    'url': 'https://github.com/user/repo/blob/main/data.csv',
-    'context': 'Dataset for analysis'
-})
+result = agent.execute_tool(
+    "download_content",
+    {
+        "url": "https://github.com/user/repo/blob/main/data.csv",
+        "context": "Dataset for analysis",
+    },
+)
 # Automatically converts to raw.githubusercontent.com
 # Saves as: Dataset_for_analysis.csv
 
 # Download multiple files
-result = agent.execute_tool('download_multiple', {
-    'urls': [
-        'https://arxiv.org/pdf/2103.00020.pdf',
-        'https://arxiv.org/pdf/1706.03762.pdf'
-    ],
-    'contexts': [
-        'Attention Paper',
-        'Transformer Original'
-    ]
-})
+result = agent.execute_tool(
+    "download_multiple",
+    {
+        "urls": [
+            "https://arxiv.org/pdf/2103.00020.pdf",
+            "https://arxiv.org/pdf/1706.03762.pdf",
+        ],
+        "contexts": ["Attention Paper", "Transformer Original"],
+    },
+)
 
 # List downloaded PDFs
-result = agent.execute_tool('list_downloads', {
-    'pattern': '*.pdf'
-})
+result = agent.execute_tool("list_downloads", {"pattern": "*.pdf"})
 ```
 
 **Smart Features:**
@@ -428,34 +422,39 @@ result = agent.execute_tool('list_downloads', {
 1. **Intelligent Extension Detection**:
    ```python
    # Priority-based routing handles edge cases correctly
-   agent.execute_tool('download_content', {
-       'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-       'context': 'ML Paper'
-   })
+   agent.execute_tool(
+       "download_content",
+       {"url": "https://arxiv.org/pdf/2103.00020.pdf", "context": "ML Paper"},
+   )
    # Result: ML_Paper.pdf ✓ (not .html despite Content-Type header)
 
    # Explicit extension override
-   agent.execute_tool('download_content', {
-       'url': 'https://example.com/ambiguous_file',
-       'context': 'Data',
-       'explicit_extension': 'csv'
-   })
+   agent.execute_tool(
+       "download_content",
+       {
+           "url": "https://example.com/ambiguous_file",
+           "context": "Data",
+           "explicit_extension": "csv",
+       },
+   )
    # Result: Data.csv
    ```
 2. **Landing Page Detection**:
    ```python
    # Input: Landing page URL
-   agent.execute_tool('download_content', {
-       'url': 'https://papers.nips.cc/paper/2017/hash/xxx-Abstract.html'
-   })
+   agent.execute_tool(
+       "download_content",
+       {"url": "https://papers.nips.cc/paper/2017/hash/xxx-Abstract.html"},
+   )
    # Agent detects HTML, finds PDF link, downloads PDF, warns about redirect
    ```
 3. **GitHub URL Handling**:
    ```python
    # Input: GitHub blob URL
-   'https://github.com/user/repo/blob/main/data.csv'
-   # Converts to: 
-   'https://raw.githubusercontent.com/user/repo/main/data.csv'
+   "https://github.com/user/repo/blob/main/data.csv"
+
+   # Converts to:
+   "https://raw.githubusercontent.com/user/repo/main/data.csv"
    ```
 4. **Context-Aware Naming**:
    ```python
@@ -463,10 +462,13 @@ result = agent.execute_tool('list_downloads', {
    # Filename: 2103.00020.pdf
 
    # With context:
-   agent.execute_tool('download_content', {
-       'url': 'https://arxiv.org/pdf/2103.00020.pdf',
-       'context': 'Attention is All You Need - Transformer Paper'
-   })
+   agent.execute_tool(
+       "download_content",
+       {
+           "url": "https://arxiv.org/pdf/2103.00020.pdf",
+           "context": "Attention is All You Need - Transformer Paper",
+       },
+   )
    # Filename: Attention_is_All_You_Need_Transformer_Paper.pdf
    ```
 
@@ -484,13 +486,15 @@ print(router.content_type_map)
 print(router.priority_extensions)
 
 # Customize mappings
-router.content_type_map['text/x-log'] = '.log'
+router.content_type_map["text/x-log"] = ".log"
+
 
 # Add custom detection strategy
 def detect_special(ctx):
-    if 'special' in ctx.url:
-        return '.special'
+    if "special" in ctx.url:
+        return ".special"
     return None
+
 
 custom_router = router.with_prepended_strategy(detect_special)
 
@@ -524,10 +528,7 @@ The agent automatically adds itself to your Claude Desktop config. Just restart 
    from aw.util import claude_desktop_config
 
    mcp = claude_desktop_config()
-   mcp['download'] = {
-       'command': 'python',
-       'args': ['/absolute/path/to/mcp_download.py']
-   }
+   mcp["download"] = {"command": "python", "args": ["/absolute/path/to/mcp_download.py"]}
    ```
 3. Restart Claude Desktop
 
@@ -542,10 +543,10 @@ mcp = claude_desktop_config()
 list(mcp)  # ['download', 'other_server', ...]
 
 # View a server's config
-print(mcp['download'])
+print(mcp["download"])
 
 # Remove a server
-del mcp['old_server']
+del mcp["old_server"]
 ```
 
 **Config file locations:**
@@ -721,7 +722,8 @@ mypy aw_agents
 3. Add to `aw_agents/__init__.py`:
    ```python
    from aw_agents.myagent import MyAgent
-   __all__.append('MyAgent')
+
+   __all__.append("MyAgent")
    ```
 4. Create tests in `tests/test_myagent.py`
 5. Update documentation
@@ -778,11 +780,11 @@ Adapters for exposing agents to different platforms.
 
 ### Classes
 
-| [`MCPAdapter`](_autosummary/aw_agents.adapters.html.md#aw_agents.adapters.MCPAdapter)(agent, server_name)          | Adapter to expose an AgentBase as an MCP server.             |
-|------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| [`OpenAPIAdapter`](_autosummary/aw_agents.adapters.html.md#aw_agents.adapters.OpenAPIAdapter)(agent, \*[, title, ...]) | Adapter to expose an AgentBase as a FastAPI/OpenAPI service. |
+| [`MCPAdapter`](_autosummary/aw_agents.adapters.html.md#aw_agents.adapters.MCPAdapter)(agent, server_name, \*\*server_options)   | Adapter to expose an AgentBase as an MCP server.             |
+|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| [`OpenAPIAdapter`](_autosummary/aw_agents.adapters.html.md#aw_agents.adapters.OpenAPIAdapter)(agent, \*[, title, ...])              | Adapter to expose an AgentBase as a FastAPI/OpenAPI service. |
 
-### *class* aw_agents.adapters.MCPAdapter(agent, server_name)
+### *class* aw_agents.adapters.MCPAdapter(agent, server_name, \*\*server_options)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -793,16 +795,19 @@ Usage:
 ```default
 agent = YourAgent()
 adapter = MCPAdapter(agent, server_name="your-agent")
-adapter.run()
+adapter.run_sync()
 ```
+
+`adapter.server` is the `py2mcp` (FastMCP) server; `adapter.tools` the functions
+it serves, one per agent tool.
 
 #### *async* run()
 
-Run the MCP server.
+Run the MCP server over stdio (awaitable).
 
 #### run_sync()
 
-Run the MCP server (synchronous wrapper).
+Run the MCP server over stdio (blocking).
 
 ### *class* aw_agents.adapters.OpenAPIAdapter(agent, , title='AI Agent API', description='AI Agent exposed via OpenAPI', version='1.0.0', server_url=None)
 
@@ -858,8 +863,11 @@ Generate an MCP server script for an agent.
 
 MCP (Model Context Protocol) adapter for AW agents.
 
-This adapter wraps any AgentBase subclass to expose it as an MCP server
-for use with Claude Desktop.
+This adapter wraps any AgentBase subclass to expose it as an MCP server for use with
+Claude Desktop. The server is built by `py2mcp` (the fleet’s MCP surface adapter, the
+same builder every other fleet MCP server goes through): each agent tool becomes one
+function whose signature is derived from the tool’s JSON schema, and
+`py2mcp.mk_mcp_server()` turns those functions into a FastMCP server.
 
 ### Functions
 
@@ -868,10 +876,10 @@ for use with Claude Desktop.
 
 ### Classes
 
-| [`MCPAdapter`](_autosummary/aw_agents.adapters.mcp.html.md#aw_agents.adapters.mcp.MCPAdapter)(agent, server_name)   | Adapter to expose an AgentBase as an MCP server.   |
-|-----------------------------------------------------------------------------------|----------------------------------------------------|
+| [`MCPAdapter`](_autosummary/aw_agents.adapters.mcp.html.md#aw_agents.adapters.mcp.MCPAdapter)(agent, server_name, \*\*server_options)   | Adapter to expose an AgentBase as an MCP server.   |
+|-------------------------------------------------------------------------------------------------------|----------------------------------------------------|
 
-### *class* aw_agents.adapters.mcp.MCPAdapter(agent, server_name)
+### *class* aw_agents.adapters.mcp.MCPAdapter(agent, server_name, \*\*server_options)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -882,16 +890,19 @@ Usage:
 ```default
 agent = YourAgent()
 adapter = MCPAdapter(agent, server_name="your-agent")
-adapter.run()
+adapter.run_sync()
 ```
+
+`adapter.server` is the `py2mcp` (FastMCP) server; `adapter.tools` the functions
+it serves, one per agent tool.
 
 #### *async* run()
 
-Run the MCP server.
+Run the MCP server over stdio (awaitable).
 
 #### run_sync()
 
-Run the MCP server (synchronous wrapper).
+Run the MCP server over stdio (blocking).
 
 ### aw_agents.adapters.mcp.create_mcp_server_script(agent_class, server_name, output_path)
 
@@ -1450,12 +1461,12 @@ Adapters:
 
 ### Classes
 
-| [`AgentBase`](_autosummary/aw_agents.html.md#aw_agents.AgentBase)()                               | Base class for all AW agents.                                                 |
-|--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`ToolExecutionResult`](_autosummary/aw_agents.html.md#aw_agents.ToolExecutionResult)(success[, data, ...]) | Standard result format for tool execution.                                    |
-| [`MCPAdapter`](_autosummary/aw_agents.html.md#aw_agents.MCPAdapter)(agent, server_name)            | Adapter to expose an AgentBase as an MCP server.                              |
-| [`OpenAPIAdapter`](_autosummary/aw_agents.html.md#aw_agents.OpenAPIAdapter)(agent, \*[, title, ...])   | Adapter to expose an AgentBase as a FastAPI/OpenAPI service.                  |
-| [`DownloadAgent`](_autosummary/aw_agents.html.md#aw_agents.DownloadAgent)([default_download_dir])     | Smart download agent with context-aware naming and intelligent link handling. |
+| [`AgentBase`](_autosummary/aw_agents.html.md#aw_agents.AgentBase)()                                        | Base class for all AW agents.                                                 |
+|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`ToolExecutionResult`](_autosummary/aw_agents.html.md#aw_agents.ToolExecutionResult)(success[, data, ...])          | Standard result format for tool execution.                                    |
+| [`MCPAdapter`](_autosummary/aw_agents.html.md#aw_agents.MCPAdapter)(agent, server_name, \*\*server_options) | Adapter to expose an AgentBase as an MCP server.                              |
+| [`OpenAPIAdapter`](_autosummary/aw_agents.html.md#aw_agents.OpenAPIAdapter)(agent, \*[, title, ...])            | Adapter to expose an AgentBase as a FastAPI/OpenAPI service.                  |
+| [`DownloadAgent`](_autosummary/aw_agents.html.md#aw_agents.DownloadAgent)([default_download_dir])              | Smart download agent with context-aware naming and intelligent link handling. |
 
 ### *class* aw_agents.AgentBase
 
@@ -1546,7 +1557,7 @@ Return tool definitions for this agent.
 * **Return type:**
   [`List`](https://docs.python.org/3/library/typing.html#typing.List)[[`Dict`](https://docs.python.org/3/library/typing.html#typing.Dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-### *class* aw_agents.MCPAdapter(agent, server_name)
+### *class* aw_agents.MCPAdapter(agent, server_name, \*\*server_options)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -1557,16 +1568,19 @@ Usage:
 ```default
 agent = YourAgent()
 adapter = MCPAdapter(agent, server_name="your-agent")
-adapter.run()
+adapter.run_sync()
 ```
+
+`adapter.server` is the `py2mcp` (FastMCP) server; `adapter.tools` the functions
+it serves, one per agent tool.
 
 #### *async* run()
 
-Run the MCP server.
+Run the MCP server over stdio (awaitable).
 
 #### run_sync()
 
-Run the MCP server (synchronous wrapper).
+Run the MCP server over stdio (blocking).
 
 ### *class* aw_agents.OpenAPIAdapter(agent, , title='AI Agent API', description='AI Agent exposed via OpenAPI', version='1.0.0', server_url=None)
 
@@ -1679,18 +1693,18 @@ Utils for aw_agents
 
 # About this build
 
-This documentation was built on **2026-11-23 04:52 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/68b7422d9b2aec81057fe635d5481537a199e074"><code>68b7422</code></a> on branch <code>main</code>, for **aw_agents 0.1.3** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 07:34 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/be86fb2b47711bec9e0a24d292e097b8abc16102"><code>be86fb2</code></a> on branch <code>main</code>, for **aw_agents 0.1.4** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.3) is behind the latest release on PyPI (0.1.4): `pip install aw_agents` gives newer code than these docs describe.
+- The documented version (0.1.4) is behind the latest release on PyPI (0.1.5): `pip install aw_agents` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/aw_agents/commit/68b7422d9b2aec81057fe635d5481537a199e074"><code>68b7422d9b2aec81057fe635d5481537a199e074</code></a> |
+| Commit              | <a href="https://github.com/addaix/aw_agents/commit/be86fb2b47711bec9e0a24d292e097b8abc16102"><code>be86fb2b47711bec9e0a24d292e097b8abc16102</code></a> |
 | Branch              | <code>main</code>                                                                                                                                       |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -1701,15 +1715,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/aw_agents</code>                                                              |
-| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45114207882">45114207882</a>     |
+| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45131801243">45131801243</a>     |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>68b7422d9b2aec81057fe635d5481537a199e074</code> (in the history of the built commit) |
+| Event commit | <code>be86fb2b47711bec9e0a24d292e097b8abc16102</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.23  |
+| epythet  | 0.2.24  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -1728,14 +1742,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/aw_agents/0.1.4/">0.1.4</a>, newer than the documented version (0.1.3).
+Latest release: <a href="https://pypi.org/project/aw_agents/0.1.5/">0.1.5</a>, newer than the documented version (0.1.4).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/aw_agents && cd aw_agents
-git checkout 68b7422d9b2aec81057fe635d5481537a199e074
-pip install "epythet==0.2.23"
+git checkout be86fb2b47711bec9e0a24d292e097b8abc16102
+pip install "epythet==0.2.24"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

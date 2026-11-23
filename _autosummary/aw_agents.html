@@ -166,7 +166,7 @@ platforms (Claude, ChatGPT, etc.) through adapters.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#aw_agents.ToolExecutionResult" title="aw_agents.ToolExecutionResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToolExecutionResult</span></code></a>(success[, data, ...])</p></td>
 <td><p>Standard result format for tool execution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#aw_agents.MCPAdapter" title="aw_agents.MCPAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MCPAdapter</span></code></a>(agent, server_name)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#aw_agents.MCPAdapter" title="aw_agents.MCPAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MCPAdapter</span></code></a>(agent, server_name, **server_options)</p></td>
 <td><p>Adapter to expose an AgentBase as an MCP server.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#aw_agents.OpenAPIAdapter" title="aw_agents.OpenAPIAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenAPIAdapter</span></code></a>(agent, *[, title, ...])</p></td>
@@ -295,26 +295,28 @@ Adapters (MCP, OpenAPI) will wrap these agents for deployment.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="aw_agents.MCPAdapter">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">aw_agents.</span></span><span class="sig-name descname"><span class="pre">MCPAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aw_agents/adapters/mcp.html#MCPAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#aw_agents.MCPAdapter" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#aw_agents.MCPAdapter'">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">aw_agents.</span></span><span class="sig-name descname"><span class="pre">MCPAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">server_options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aw_agents/adapters/mcp.html#MCPAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#aw_agents.MCPAdapter" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#aw_agents.MCPAdapter'">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Adapter to expose an AgentBase as an MCP server.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">agent</span> <span class="o">=</span> <span class="n">YourAgent</span><span class="p">()</span>
 </span><span id="line-2"><span class="n">adapter</span> <span class="o">=</span> <span class="n">MCPAdapter</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">server_name</span><span class="o">=</span><span class="s2">"your-agent"</span><span class="p">)</span>
-</span><span id="line-3"><span class="n">adapter</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span id="line-3"><span class="n">adapter</span><span class="o">.</span><span class="n">run_sync</span><span class="p">()</span>
 </span></code></pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">adapter.server</span></code> is the <code class="docutils literal notranslate"><span class="pre">py2mcp</span></code> (FastMCP) server; <code class="docutils literal notranslate"><span class="pre">adapter.tools</span></code> the functions
+it serves, one per agent tool.</p>
 <dl class="field-list simple">
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="aw_agents.MCPAdapter.run">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aw_agents/adapters/mcp.html#MCPAdapter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#aw_agents.MCPAdapter.run" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#aw_agents.MCPAdapter.run'">¶</a></dt>
-<dd><p>Run the MCP server.</p>
+<dd><p>Run the MCP server over stdio (awaitable).</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="aw_agents.MCPAdapter.run_sync">
 <span class="sig-name descname"><span class="pre">run_sync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aw_agents/adapters/mcp.html#MCPAdapter.run_sync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#aw_agents.MCPAdapter.run_sync" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#aw_agents.MCPAdapter.run_sync'">¶</a></dt>
-<dd><p>Run the MCP server (synchronous wrapper).</p>
+<dd><p>Run the MCP server over stdio (blocking).</p>
 </dd></dl>
 </dd></dl>
 <dl class="py class">
@@ -498,7 +500,7 @@ Adapters (MCP, OpenAPI) will wrap these agents for deployment.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=360bc84d"></script>
+<script src="../_static/documentation_options.js?v=fd825880"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

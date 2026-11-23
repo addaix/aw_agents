@@ -10,11 +10,11 @@ Adapters for exposing agents to different platforms.
 
 ### Classes
 
-| [`MCPAdapter`](#aw_agents.adapters.MCPAdapter)(agent, server_name)          | Adapter to expose an AgentBase as an MCP server.             |
-|------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| [`OpenAPIAdapter`](#aw_agents.adapters.OpenAPIAdapter)(agent, \*[, title, ...]) | Adapter to expose an AgentBase as a FastAPI/OpenAPI service. |
+| [`MCPAdapter`](#aw_agents.adapters.MCPAdapter)(agent, server_name, \*\*server_options)   | Adapter to expose an AgentBase as an MCP server.             |
+|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| [`OpenAPIAdapter`](#aw_agents.adapters.OpenAPIAdapter)(agent, \*[, title, ...])              | Adapter to expose an AgentBase as a FastAPI/OpenAPI service. |
 
-### *class* aw_agents.adapters.MCPAdapter(agent, server_name)
+### *class* aw_agents.adapters.MCPAdapter(agent, server_name, \*\*server_options)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -25,16 +25,19 @@ Usage:
 ```default
 agent = YourAgent()
 adapter = MCPAdapter(agent, server_name="your-agent")
-adapter.run()
+adapter.run_sync()
 ```
+
+`adapter.server` is the `py2mcp` (FastMCP) server; `adapter.tools` the functions
+it serves, one per agent tool.
 
 #### *async* run()
 
-Run the MCP server.
+Run the MCP server over stdio (awaitable).
 
 #### run_sync()
 
-Run the MCP server (synchronous wrapper).
+Run the MCP server over stdio (blocking).
 
 ### *class* aw_agents.adapters.OpenAPIAdapter(agent, , title='AI Agent API', description='AI Agent exposed via OpenAPI', version='1.0.0', server_url=None)
 

@@ -34,12 +34,12 @@ Adapters:
 
 ### Classes
 
-| [`AgentBase`](#aw_agents.AgentBase)()                               | Base class for all AW agents.                                                 |
-|--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`ToolExecutionResult`](#aw_agents.ToolExecutionResult)(success[, data, ...]) | Standard result format for tool execution.                                    |
-| [`MCPAdapter`](#aw_agents.MCPAdapter)(agent, server_name)            | Adapter to expose an AgentBase as an MCP server.                              |
-| [`OpenAPIAdapter`](#aw_agents.OpenAPIAdapter)(agent, \*[, title, ...])   | Adapter to expose an AgentBase as a FastAPI/OpenAPI service.                  |
-| [`DownloadAgent`](#aw_agents.DownloadAgent)([default_download_dir])     | Smart download agent with context-aware naming and intelligent link handling. |
+| [`AgentBase`](#aw_agents.AgentBase)()                                        | Base class for all AW agents.                                                 |
+|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`ToolExecutionResult`](#aw_agents.ToolExecutionResult)(success[, data, ...])          | Standard result format for tool execution.                                    |
+| [`MCPAdapter`](#aw_agents.MCPAdapter)(agent, server_name, \*\*server_options) | Adapter to expose an AgentBase as an MCP server.                              |
+| [`OpenAPIAdapter`](#aw_agents.OpenAPIAdapter)(agent, \*[, title, ...])            | Adapter to expose an AgentBase as a FastAPI/OpenAPI service.                  |
+| [`DownloadAgent`](#aw_agents.DownloadAgent)([default_download_dir])              | Smart download agent with context-aware naming and intelligent link handling. |
 
 ### *class* aw_agents.AgentBase
 
@@ -130,7 +130,7 @@ Return tool definitions for this agent.
 * **Return type:**
   [`List`](https://docs.python.org/3/library/typing.html#typing.List)[[`Dict`](https://docs.python.org/3/library/typing.html#typing.Dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-### *class* aw_agents.MCPAdapter(agent, server_name)
+### *class* aw_agents.MCPAdapter(agent, server_name, \*\*server_options)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -141,16 +141,19 @@ Usage:
 ```default
 agent = YourAgent()
 adapter = MCPAdapter(agent, server_name="your-agent")
-adapter.run()
+adapter.run_sync()
 ```
+
+`adapter.server` is the `py2mcp` (FastMCP) server; `adapter.tools` the functions
+it serves, one per agent tool.
 
 #### *async* run()
 
-Run the MCP server.
+Run the MCP server over stdio (awaitable).
 
 #### run_sync()
 
-Run the MCP server (synchronous wrapper).
+Run the MCP server over stdio (blocking).
 
 ### *class* aw_agents.OpenAPIAdapter(agent, , title='AI Agent API', description='AI Agent exposed via OpenAPI', version='1.0.0', server_url=None)
 
