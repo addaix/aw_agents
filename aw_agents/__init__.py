@@ -20,7 +20,12 @@ Example:
     >>> # adapter.run() serves the agent via MCP for Claude (blocks; not run here)
 """
 
-__version__ = "0.1.0"
+try:
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+    __version__ = _pkg_version("aw_agents")  # single source of truth: pyproject metadata
+except PackageNotFoundError:  # source tree that is not installed
+    __version__ = "0+unknown"
 
 from aw_agents.util import AW_AGENTS_DATA_DIR, djoin
 
