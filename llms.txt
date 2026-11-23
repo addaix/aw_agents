@@ -18,7 +18,7 @@
 - [aw_agents.base](_autosummary/aw_agents.base.html.md): Base classes and protocols for AW agents.
 - [aw_agents.util](_autosummary/aw_agents.util.html.md): Utils for aw_agents
 - [For AI agents](ai-agents.html.md): &#96;aw_agents&#96; ships artifacts for coding agents alongside its code. This page lists
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-23 02:01 UTC&#42;&#42; from commit &lt;a href="https://github.com/add...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-23 04:52 UTC&#42;&#42; from commit &lt;a href="https://github.com/add...
 
 ## Optional
 
