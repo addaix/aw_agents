@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aw_agents"
-version = "0.1.6"
+version = "0.1.7"
 description = "AI agents for agentic workflows, deployable to multiple chatbot platforms"
 readme = "README.md"
 requires-python = ">=3.10"
