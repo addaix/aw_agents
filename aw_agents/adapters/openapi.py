@@ -23,6 +23,7 @@ except ImportError:
         "Warning: fastapi not installed. Install with: pip install fastapi uvicorn pydantic"
     )
 
+from aw_agents.adapters.json_types import annotation_from_json_type
 from aw_agents.base import AgentBase
 
 
@@ -167,17 +168,13 @@ class OpenAPIAdapter:
 
         return create_model(model_name, **fields)  # type: ignore
 
-    def _json_type_to_python(self, json_type: str) -> type:
-        """Convert JSON schema type to Python type."""
-        type_map = {
-            "string": str,
-            "integer": int,
-            "number": float,
-            "boolean": bool,
-            "array": list,
-            "object": dict,
-        }
-        return type_map.get(json_type, str)
+    def _json_type_to_python(self, json_type: Any) -> Any:
+        """Convert a JSON-schema type (one name, or a union list of names) to a Python type.
+
+        An unknown type is ``str``; a union is the ``Union`` of its known types (see
+        :func:`aw_agents.adapters.json_types.annotation_from_json_type`).
+        """
+        return annotation_from_json_type(json_type, unknown=str)
 
     def _customize_openapi_schema(self, host: str, port: int):
         """Add servers field to OpenAPI schema."""
