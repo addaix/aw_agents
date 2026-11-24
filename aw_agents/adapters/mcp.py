@@ -58,21 +58,34 @@ def _format_error_response(result: Dict[str, Any]) -> str:
 def _annotation_from_schema(spec: Dict[str, Any]) -> Any:
     """The Python annotation that FastMCP turns back into the JSON-schema ``spec``.
 
-    Keeps what a bare type would lose: array item types (recursively) and enums.
+    Keeps what a bare type would lose: array item types (recursively) and enums. A
+    union ``type`` (a list, as in ``["string", "null"]``) takes its first known
+    non-null type, made ``Optional`` when ``"null"`` is listed; an unknown type is
+    ``Any``.
 
     >>> _annotation_from_schema({"type": "array", "items": {"type": "string"}})
     list[str]
     >>> _annotation_from_schema({"type": "string", "enum": ["a", "b"]})
     typing.Literal['a', 'b']
+    >>> _annotation_from_schema({"type": ["string", "null"]})
+    typing.Optional[str]
     >>> _annotation_from_schema({})
     typing.Any
     """
     if spec.get("enum"):
         return Literal[tuple(spec["enum"])]
     json_type = spec.get("type")
+    nullable = False
+    if isinstance(json_type, list):
+        nullable = "null" in json_type
+        json_type = next((t for t in json_type if t in _JSON_TYPES), None)
     if json_type == "array" and isinstance(spec.get("items"), dict):
-        return list[_annotation_from_schema(spec["items"])]
-    return _JSON_TYPES.get(json_type, Any)
+        annotation = list[_annotation_from_schema(spec["items"])]
+    elif isinstance(json_type, str):
+        annotation = _JSON_TYPES.get(json_type, Any)
+    else:
+        annotation = Any
+    return Optional[annotation] if nullable and annotation is not Any else annotation
 
 
 def _signature_from_schema(schema: Dict[str, Any]) -> inspect.Signature:
