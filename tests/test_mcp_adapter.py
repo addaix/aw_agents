@@ -73,3 +73,42 @@ def test_failure_is_formatted(adapter):
 
 def test_server_name(adapter):
     assert adapter.server.name == "echo-agent"
+
+
+class DescribedAgent(EchoAgent):
+    """An agent whose tool schema carries descriptions, array item types and an enum."""
+
+    def get_tools(self):
+        return [
+            {
+                "name": "tag",
+                "description": "Tag some URLs.",
+                "parameters": create_json_schema(
+                    {
+                        "urls": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "URLs to tag",
+                        },
+                        "mode": {
+                            "type": "string",
+                            "enum": ["fast", "slow"],
+                            "description": "How to tag",
+                        },
+                    },
+                    required=["urls"],
+                ),
+            }
+        ]
+
+
+def test_served_schema_keeps_descriptions_items_and_enums():
+    """The served schema is the agent's schema, not a bare-type rebuild (addaix/aw_agents#9)."""
+    adapter = MCPAdapter(DescribedAgent(), "described")
+    (tool,) = asyncio.run(adapter.server.list_tools())
+    props = tool.parameters["properties"]
+    assert props["urls"]["description"] == "URLs to tag"
+    assert props["urls"]["items"] == {"type": "string"}
+    assert props["mode"]["description"] == "How to tag"
+    assert {"enum": ["fast", "slow"], "type": "string"} in props["mode"]["anyOf"]
+    assert tool.parameters["required"] == ["urls"]

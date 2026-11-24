@@ -9,7 +9,7 @@ function whose signature is derived from the tool's JSON schema, and
 """
 
 import inspect
-from typing import Any, Callable, Dict, Optional
+from typing import Annotated, Any, Callable, Dict, Literal, Optional
 from pathlib import Path
 
 from aw_agents.base import AgentBase
@@ -55,24 +55,49 @@ def _format_error_response(result: Dict[str, Any]) -> str:
     return f"❌ Error: {message}"
 
 
+def _annotation_from_schema(spec: Dict[str, Any]) -> Any:
+    """The Python annotation that FastMCP turns back into the JSON-schema ``spec``.
+
+    Keeps what a bare type would lose: array item types (recursively) and enums.
+
+    >>> _annotation_from_schema({"type": "array", "items": {"type": "string"}})
+    list[str]
+    >>> _annotation_from_schema({"type": "string", "enum": ["a", "b"]})
+    typing.Literal['a', 'b']
+    >>> _annotation_from_schema({})
+    typing.Any
+    """
+    if spec.get("enum"):
+        return Literal[tuple(spec["enum"])]
+    json_type = spec.get("type")
+    if json_type == "array" and isinstance(spec.get("items"), dict):
+        return list[_annotation_from_schema(spec["items"])]
+    return _JSON_TYPES.get(json_type, Any)
+
+
 def _signature_from_schema(schema: Dict[str, Any]) -> inspect.Signature:
     """A keyword-only signature for a tool's JSON-schema ``parameters``.
 
     Required properties have no default; optional ones default to the schema's
-    ``default`` (else ``None``).
+    ``default`` (else ``None``). A property's ``description`` is carried as
+    ``Annotated[..., Field(description=...)]`` so the served schema keeps it.
 
     >>> str(_signature_from_schema({"properties": {"url": {"type": "string"}, "n": {"type": "integer"}}, "required": ["url"]}))
     '(*, url: str, n: Optional[int] = None)'
     """
+    from pydantic import Field
+
     required = set(schema.get("required", []))
     params = []
     for name, spec in schema.get("properties", {}).items():
-        annotation = _JSON_TYPES.get(spec.get("type"), Any)
+        annotation = _annotation_from_schema(spec)
         if name in required:
             default = inspect.Parameter.empty
         else:
             default = spec.get("default")
             annotation = Optional[annotation]
+        if spec.get("description"):
+            annotation = Annotated[annotation, Field(description=spec["description"])]
         params.append(
             inspect.Parameter(
                 name,
