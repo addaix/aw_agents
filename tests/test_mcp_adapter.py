@@ -112,3 +112,47 @@ def test_served_schema_keeps_descriptions_items_and_enums():
     assert props["mode"]["description"] == "How to tag"
     assert {"enum": ["fast", "slow"], "type": "string"} in props["mode"]["anyOf"]
     assert tool.parameters["required"] == ["urls"]
+
+
+@pytest.mark.parametrize(
+    "json_type, expected",
+    [
+        (["string", "null"], "Optional[str]"),
+        (["null", "integer"], "Optional[int]"),
+        (["string", "integer"], "str"),
+        (["null"], "Any"),
+        (["mystery"], "Any"),
+    ],
+)
+def test_a_union_json_type_maps_to_its_first_known_type(json_type, expected):
+    """A list ``type`` (a JSON-schema union) does not crash signature building."""
+    import inspect
+
+    from aw_agents.adapters.mcp import _signature_from_schema
+
+    sig = _signature_from_schema(
+        {"properties": {"x": {"type": json_type}}, "required": ["x"]}
+    )
+    annotation = sig.parameters["x"].annotation
+    assert inspect.formatannotation(annotation) == expected
+
+
+class NullableAgent(EchoAgent):
+    """An agent with a nullable parameter."""
+
+    def get_tools(self):
+        return [
+            {
+                "name": "tag",
+                "description": "Tag a URL.",
+                "parameters": create_json_schema(
+                    {"note": {"type": ["string", "null"]}}, required=[]
+                ),
+            }
+        ]
+
+
+def test_an_agent_with_a_nullable_parameter_is_served():
+    adapter = MCPAdapter(NullableAgent(), "nullable")
+    (tool,) = asyncio.run(adapter.server.list_tools())
+    assert "note" in tool.parameters["properties"]
