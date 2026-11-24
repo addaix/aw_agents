@@ -176,7 +176,7 @@
 </span><span id="line-9"><span class="sd">"""</span>
 </span><span id="line-10">
 </span><span id="line-11"><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-</span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+</span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
 </span><span id="line-13"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 </span><span id="line-14">
 </span><span id="line-15"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
@@ -222,167 +222,192 @@
 </span><span id="line-55">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"❌ Error: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span>
 </span><span id="line-56">
 </span><span id="line-57">
-</span><span id="line-58"><span class="k">def</span><span class="w"> </span><span class="nf">_signature_from_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
-</span><span id="line-59"><span class="w">    </span><span class="sd">"""A keyword-only signature for a tool's JSON-schema ``parameters``.</span>
+</span><span id="line-58"><span class="k">def</span><span class="w"> </span><span class="nf">_annotation_from_schema</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="line-59"><span class="w">    </span><span class="sd">"""The Python annotation that FastMCP turns back into the JSON-schema ``spec``.</span>
 </span><span id="line-60">
-</span><span id="line-61"><span class="sd">    Required properties have no default; optional ones default to the schema's</span>
-</span><span id="line-62"><span class="sd">    ``default`` (else ``None``).</span>
-</span><span id="line-63">
-</span><span id="line-64"><span class="sd">    &gt;&gt;&gt; str(_signature_from_schema({"properties": {"url": {"type": "string"}, "n": {"type": "integer"}}, "required": ["url"]}))</span>
-</span><span id="line-65"><span class="sd">    '(*, url: str, n: Optional[int] = None)'</span>
-</span><span id="line-66"><span class="sd">    """</span>
-</span><span id="line-67">    <span class="n">required</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"required"</span><span class="p">,</span> <span class="p">[]))</span>
-</span><span id="line-68">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-69">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-70">        <span class="n">annotation</span> <span class="o">=</span> <span class="n">_JSON_TYPES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span> <span class="n">Any</span><span class="p">)</span>
-</span><span id="line-71">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
-</span><span id="line-72">            <span class="n">default</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
-</span><span id="line-73">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-74">            <span class="n">default</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
-</span><span id="line-75">            <span class="n">annotation</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span>
-</span><span id="line-76">        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-77">            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
-</span><span id="line-78">                <span class="n">name</span><span class="p">,</span>
-</span><span id="line-79">                <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span>
-</span><span id="line-80">                <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
-</span><span id="line-81">                <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
-</span><span id="line-82">            <span class="p">)</span>
-</span><span id="line-83">        <span class="p">)</span>
-</span><span id="line-84">    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="line-85">
-</span><span id="line-86">
+</span><span id="line-61"><span class="sd">    Keeps what a bare type would lose: array item types (recursively) and enums.</span>
+</span><span id="line-62">
+</span><span id="line-63"><span class="sd">    &gt;&gt;&gt; _annotation_from_schema({"type": "array", "items": {"type": "string"}})</span>
+</span><span id="line-64"><span class="sd">    list[str]</span>
+</span><span id="line-65"><span class="sd">    &gt;&gt;&gt; _annotation_from_schema({"type": "string", "enum": ["a", "b"]})</span>
+</span><span id="line-66"><span class="sd">    typing.Literal['a', 'b']</span>
+</span><span id="line-67"><span class="sd">    &gt;&gt;&gt; _annotation_from_schema({})</span>
+</span><span id="line-68"><span class="sd">    typing.Any</span>
+</span><span id="line-69"><span class="sd">    """</span>
+</span><span id="line-70">    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"enum"</span><span class="p">):</span>
+</span><span id="line-71">        <span class="k">return</span> <span class="n">Literal</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"enum"</span><span class="p">])]</span>
+</span><span id="line-72">    <span class="n">json_type</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span>
+</span><span id="line-73">    <span class="k">if</span> <span class="n">json_type</span> <span class="o">==</span> <span class="s2">"array"</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"items"</span><span class="p">),</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-74">        <span class="k">return</span> <span class="nb">list</span><span class="p">[</span><span class="n">_annotation_from_schema</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"items"</span><span class="p">])]</span>
+</span><span id="line-75">    <span class="k">return</span> <span class="n">_JSON_TYPES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">json_type</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span>
+</span><span id="line-76">
+</span><span id="line-77">
+</span><span id="line-78"><span class="k">def</span><span class="w"> </span><span class="nf">_signature_from_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
+</span><span id="line-79"><span class="w">    </span><span class="sd">"""A keyword-only signature for a tool's JSON-schema ``parameters``.</span>
+</span><span id="line-80">
+</span><span id="line-81"><span class="sd">    Required properties have no default; optional ones default to the schema's</span>
+</span><span id="line-82"><span class="sd">    ``default`` (else ``None``). A property's ``description`` is carried as</span>
+</span><span id="line-83"><span class="sd">    ``Annotated[..., Field(description=...)]`` so the served schema keeps it.</span>
+</span><span id="line-84">
+</span><span id="line-85"><span class="sd">    &gt;&gt;&gt; str(_signature_from_schema({"properties": {"url": {"type": "string"}, "n": {"type": "integer"}}, "required": ["url"]}))</span>
+</span><span id="line-86"><span class="sd">    '(*, url: str, n: Optional[int] = None)'</span>
+</span><span id="line-87"><span class="sd">    """</span>
+</span><span id="line-88">    <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span id="line-89">
+</span><span id="line-90">    <span class="n">required</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"required"</span><span class="p">,</span> <span class="p">[]))</span>
+</span><span id="line-91">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-92">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-93">        <span class="n">annotation</span> <span class="o">=</span> <span class="n">_annotation_from_schema</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+</span><span id="line-94">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
+</span><span id="line-95">            <span class="n">default</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+</span><span id="line-96">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-97">            <span class="n">default</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
+</span><span id="line-98">            <span class="n">annotation</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span>
+</span><span id="line-99">        <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">):</span>
+</span><span id="line-100">            <span class="n">annotation</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">annotation</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">spec</span><span class="p">[</span><span class="s2">"description"</span><span class="p">])]</span>
+</span><span id="line-101">        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-102">            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+</span><span id="line-103">                <span class="n">name</span><span class="p">,</span>
+</span><span id="line-104">                <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span>
+</span><span id="line-105">                <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+</span><span id="line-106">                <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
+</span><span id="line-107">            <span class="p">)</span>
+</span><span id="line-108">        <span class="p">)</span>
+</span><span id="line-109">    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="line-110">
+</span><span id="line-111">
 <div class="viewcode-block" id="MCPAdapter">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.mcp.html#aw_agents.MCPAdapter">[docs]</a>
-</span><span id="line-87"><span class="k">class</span><span class="w"> </span><span class="nc">MCPAdapter</span><span class="p">:</span>
-</span><span id="line-88"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-89"><span class="sd">    Adapter to expose an AgentBase as an MCP server.</span>
-</span><span id="line-90">
-</span><span id="line-91"><span class="sd">    Usage:</span>
-</span><span id="line-92"><span class="sd">        agent = YourAgent()</span>
-</span><span id="line-93"><span class="sd">        adapter = MCPAdapter(agent, server_name="your-agent")</span>
-</span><span id="line-94"><span class="sd">        adapter.run_sync()</span>
-</span><span id="line-95">
-</span><span id="line-96"><span class="sd">    ``adapter.server`` is the ``py2mcp`` (FastMCP) server; ``adapter.tools`` the functions</span>
-</span><span id="line-97"><span class="sd">    it serves, one per agent tool.</span>
-</span><span id="line-98"><span class="sd">    """</span>
-</span><span id="line-99">
-</span><span id="line-100">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">server_options</span><span class="p">):</span>
-</span><span id="line-101"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-102"><span class="sd">        Initialize MCP adapter.</span>
-</span><span id="line-103">
-</span><span id="line-104"><span class="sd">        Args:</span>
-</span><span id="line-105"><span class="sd">            agent: Agent instance to wrap</span>
-</span><span id="line-106"><span class="sd">            server_name: Name for the MCP server</span>
-</span><span id="line-107"><span class="sd">            **server_options: Forwarded to :func:`py2mcp.mk_mcp_server` (``instructions``,</span>
-</span><span id="line-108"><span class="sd">                ``middleware``, ``annotations``...)</span>
-</span><span id="line-109"><span class="sd">        """</span>
-</span><span id="line-110">        <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_server</span>
-</span><span id="line-111">
-</span><span id="line-112">        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
-</span><span id="line-113">        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mk_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_tools</span><span class="p">()]</span>
-</span><span id="line-114">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_server</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span> <span class="o">**</span><span class="n">server_options</span><span class="p">)</span>
+</span><span id="line-112"><span class="k">class</span><span class="w"> </span><span class="nc">MCPAdapter</span><span class="p">:</span>
+</span><span id="line-113"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-114"><span class="sd">    Adapter to expose an AgentBase as an MCP server.</span>
 </span><span id="line-115">
-</span><span id="line-116">    <span class="k">def</span><span class="w"> </span><span class="nf">_mk_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-117"><span class="w">        </span><span class="sd">"""The function that serves one agent tool: arguments in, formatted text out."""</span>
-</span><span id="line-118">        <span class="n">name</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
-</span><span id="line-119">
-</span><span id="line-120">        <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">):</span>
-</span><span id="line-121">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-122">                <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
-</span><span id="line-123">                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
-</span><span id="line-124">                <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]:</span>
-</span><span id="line-125">                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_success_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</span><span id="line-126">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_error_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</span><span id="line-127">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="line-128">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"❌ Error executing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-129">
-</span><span id="line-130">        <span class="n">call</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="line-131">        <span class="n">call</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"description"</span><span class="p">]</span>
-</span><span id="line-132">        <span class="n">signature</span> <span class="o">=</span> <span class="n">_signature_from_schema</span><span class="p">(</span><span class="n">tool</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">])</span>
-</span><span id="line-133">        <span class="n">call</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>
-</span><span id="line-134">        <span class="n">call</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-135">            <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">annotation</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-</span><span id="line-136">        <span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"return"</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
-</span><span id="line-137">        <span class="k">return</span> <span class="n">call</span>
-</span><span id="line-138">
-</span><span id="line-139">    <span class="n">_format_success_response</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_format_success_response</span><span class="p">)</span>
-</span><span id="line-140">    <span class="n">_format_error_response</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_format_error_response</span><span class="p">)</span>
-</span><span id="line-141">
+</span><span id="line-116"><span class="sd">    Usage:</span>
+</span><span id="line-117"><span class="sd">        agent = YourAgent()</span>
+</span><span id="line-118"><span class="sd">        adapter = MCPAdapter(agent, server_name="your-agent")</span>
+</span><span id="line-119"><span class="sd">        adapter.run_sync()</span>
+</span><span id="line-120">
+</span><span id="line-121"><span class="sd">    ``adapter.server`` is the ``py2mcp`` (FastMCP) server; ``adapter.tools`` the functions</span>
+</span><span id="line-122"><span class="sd">    it serves, one per agent tool.</span>
+</span><span id="line-123"><span class="sd">    """</span>
+</span><span id="line-124">
+</span><span id="line-125">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">server_options</span><span class="p">):</span>
+</span><span id="line-126"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-127"><span class="sd">        Initialize MCP adapter.</span>
+</span><span id="line-128">
+</span><span id="line-129"><span class="sd">        Args:</span>
+</span><span id="line-130"><span class="sd">            agent: Agent instance to wrap</span>
+</span><span id="line-131"><span class="sd">            server_name: Name for the MCP server</span>
+</span><span id="line-132"><span class="sd">            **server_options: Forwarded to :func:`py2mcp.mk_mcp_server` (``instructions``,</span>
+</span><span id="line-133"><span class="sd">                ``middleware``, ``annotations``...)</span>
+</span><span id="line-134"><span class="sd">        """</span>
+</span><span id="line-135">        <span class="kn">from</span><span class="w"> </span><span class="nn">py2mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_mcp_server</span>
+</span><span id="line-136">
+</span><span id="line-137">        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
+</span><span id="line-138">        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mk_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_tools</span><span class="p">()]</span>
+</span><span id="line-139">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">mk_mcp_server</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">server_name</span><span class="p">,</span> <span class="o">**</span><span class="n">server_options</span><span class="p">)</span>
+</span><span id="line-140">
+</span><span id="line-141">    <span class="k">def</span><span class="w"> </span><span class="nf">_mk_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-142"><span class="w">        </span><span class="sd">"""The function that serves one agent tool: arguments in, formatted text out."""</span>
+</span><span id="line-143">        <span class="n">name</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+</span><span id="line-144">
+</span><span id="line-145">        <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">):</span>
+</span><span id="line-146">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-147">                <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+</span><span id="line-148">                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
+</span><span id="line-149">                <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]:</span>
+</span><span id="line-150">                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_success_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="line-151">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_error_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="line-152">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="line-153">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"❌ Error executing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-154">
+</span><span id="line-155">        <span class="n">call</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="line-156">        <span class="n">call</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"description"</span><span class="p">]</span>
+</span><span id="line-157">        <span class="n">signature</span> <span class="o">=</span> <span class="n">_signature_from_schema</span><span class="p">(</span><span class="n">tool</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">])</span>
+</span><span id="line-158">        <span class="n">call</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>
+</span><span id="line-159">        <span class="n">call</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-160">            <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">annotation</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</span><span id="line-161">        <span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"return"</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
+</span><span id="line-162">        <span class="k">return</span> <span class="n">call</span>
+</span><span id="line-163">
+</span><span id="line-164">    <span class="n">_format_success_response</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_format_success_response</span><span class="p">)</span>
+</span><span id="line-165">    <span class="n">_format_error_response</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_format_error_response</span><span class="p">)</span>
+</span><span id="line-166">
 <div class="viewcode-block" id="MCPAdapter.run_sync">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.mcp.html#aw_agents.MCPAdapter.run_sync">[docs]</a>
-</span><span id="line-142">    <span class="k">def</span><span class="w"> </span><span class="nf">run_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-143"><span class="w">        </span><span class="sd">"""Run the MCP server over stdio (blocking)."""</span>
-</span><span id="line-144">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+</span><span id="line-167">    <span class="k">def</span><span class="w"> </span><span class="nf">run_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-168"><span class="w">        </span><span class="sd">"""Run the MCP server over stdio (blocking)."""</span>
+</span><span id="line-169">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
 
-</span><span id="line-145">
+</span><span id="line-170">
 <div class="viewcode-block" id="MCPAdapter.run">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.mcp.html#aw_agents.MCPAdapter.run">[docs]</a>
-</span><span id="line-146">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-147"><span class="w">        </span><span class="sd">"""Run the MCP server over stdio (awaitable)."""</span>
-</span><span id="line-148">        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">run_stdio_async</span><span class="p">()</span></div>
+</span><span id="line-171">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-172"><span class="w">        </span><span class="sd">"""Run the MCP server over stdio (awaitable)."""</span>
+</span><span id="line-173">        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">run_stdio_async</span><span class="p">()</span></div>
 </div>
 
-</span><span id="line-149">
-</span><span id="line-150">
+</span><span id="line-174">
+</span><span id="line-175">
 <div class="viewcode-block" id="create_mcp_server_script">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.mcp.html#aw_agents.create_mcp_server_script">[docs]</a>
-</span><span id="line-151"><span class="k">def</span><span class="w"> </span><span class="nf">create_mcp_server_script</span><span class="p">(</span><span class="n">agent_class</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-</span><span id="line-152"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-153"><span class="sd">    Generate an MCP server script for an agent.</span>
-</span><span id="line-154">
-</span><span id="line-155"><span class="sd">    Args:</span>
-</span><span id="line-156"><span class="sd">        agent_class: Agent class to wrap</span>
-</span><span id="line-157"><span class="sd">        server_name: Name for the MCP server</span>
-</span><span id="line-158"><span class="sd">        output_path: Path to write the script</span>
-</span><span id="line-159"><span class="sd">    """</span>
-</span><span id="line-160">    <span class="c1"># Determine module path for import</span>
-</span><span id="line-161">    <span class="n">agent_module</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__module__</span>
-</span><span id="line-162">    <span class="k">if</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"aw_agents."</span><span class="p">):</span>
-</span><span id="line-163">        <span class="c1"># Extract the submodule (e.g., 'agents.download' from 'aw_agents.agents.download.agent')</span>
-</span><span id="line-164">        <span class="n">parts</span> <span class="o">=</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
-</span><span id="line-165">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-</span><span id="line-166">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># aw_agents.agents.download</span>
-</span><span id="line-167">        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span id="line-168">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># aw_agents.agents</span>
-</span><span id="line-169">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-170">            <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
-</span><span id="line-171">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-172">        <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
-</span><span id="line-173">
-</span><span id="line-174">    <span class="n">script_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'''"""</span>
-</span><span id="line-175"><span class="s1">MCP Server for </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
-</span><span id="line-176">
-</span><span id="line-177"><span class="s1">Auto-generated MCP server script.</span>
-</span><span id="line-178">
-</span><span id="line-179"><span class="s1">To use with Claude Desktop, add to your config:</span>
-</span><span id="line-180"><span class="se">{{</span>
-</span><span id="line-181"><span class="s1">  "mcpServers": </span><span class="se">{{</span>
-</span><span id="line-182"><span class="s1">    "</span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s1">": </span><span class="se">{{</span>
-</span><span id="line-183"><span class="s1">      "command": "python",</span>
-</span><span id="line-184"><span class="s1">      "args": ["</span><span class="si">{</span><span class="n">output_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s1">"]</span>
-</span><span id="line-185"><span class="s1">    </span><span class="se">}}</span>
-</span><span id="line-186"><span class="s1">  </span><span class="se">}}</span>
-</span><span id="line-187"><span class="se">}}</span>
-</span><span id="line-188"><span class="s1">"""</span>
-</span><span id="line-189">
-</span><span id="line-190"><span class="s1">from aw_agents.adapters.mcp import MCPAdapter</span>
-</span><span id="line-191"><span class="s1">from </span><span class="si">{</span><span class="n">import_module</span><span class="si">}</span><span class="s1"> import </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
-</span><span id="line-192">
-</span><span id="line-193">
-</span><span id="line-194"><span class="s1">def main():</span>
-</span><span id="line-195"><span class="s1">    agent = </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()</span>
-</span><span id="line-196"><span class="s1">    adapter = MCPAdapter(agent, "</span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s1">")</span>
-</span><span id="line-197"><span class="s1">    adapter.run_sync()</span>
+</span><span id="line-176"><span class="k">def</span><span class="w"> </span><span class="nf">create_mcp_server_script</span><span class="p">(</span><span class="n">agent_class</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+</span><span id="line-177"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-178"><span class="sd">    Generate an MCP server script for an agent.</span>
+</span><span id="line-179">
+</span><span id="line-180"><span class="sd">    Args:</span>
+</span><span id="line-181"><span class="sd">        agent_class: Agent class to wrap</span>
+</span><span id="line-182"><span class="sd">        server_name: Name for the MCP server</span>
+</span><span id="line-183"><span class="sd">        output_path: Path to write the script</span>
+</span><span id="line-184"><span class="sd">    """</span>
+</span><span id="line-185">    <span class="c1"># Determine module path for import</span>
+</span><span id="line-186">    <span class="n">agent_module</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__module__</span>
+</span><span id="line-187">    <span class="k">if</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"aw_agents."</span><span class="p">):</span>
+</span><span id="line-188">        <span class="c1"># Extract the submodule (e.g., 'agents.download' from 'aw_agents.agents.download.agent')</span>
+</span><span id="line-189">        <span class="n">parts</span> <span class="o">=</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+</span><span id="line-190">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+</span><span id="line-191">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># aw_agents.agents.download</span>
+</span><span id="line-192">        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+</span><span id="line-193">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># aw_agents.agents</span>
+</span><span id="line-194">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-195">            <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
+</span><span id="line-196">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-197">        <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
 </span><span id="line-198">
-</span><span id="line-199">
-</span><span id="line-200"><span class="s1">if __name__ == "__main__":</span>
-</span><span id="line-201"><span class="s1">    main()</span>
-</span><span id="line-202"><span class="s1">'''</span>
+</span><span id="line-199">    <span class="n">script_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'''"""</span>
+</span><span id="line-200"><span class="s1">MCP Server for </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
+</span><span id="line-201">
+</span><span id="line-202"><span class="s1">Auto-generated MCP server script.</span>
 </span><span id="line-203">
-</span><span id="line-204">    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">script_content</span><span class="p">)</span>
-</span><span id="line-205">    <span class="n">output_path</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
-</span><span id="line-206">
-</span><span id="line-207">    <span class="k">return</span> <span class="n">output_path</span></div>
+</span><span id="line-204"><span class="s1">To use with Claude Desktop, add to your config:</span>
+</span><span id="line-205"><span class="se">{{</span>
+</span><span id="line-206"><span class="s1">  "mcpServers": </span><span class="se">{{</span>
+</span><span id="line-207"><span class="s1">    "</span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s1">": </span><span class="se">{{</span>
+</span><span id="line-208"><span class="s1">      "command": "python",</span>
+</span><span id="line-209"><span class="s1">      "args": ["</span><span class="si">{</span><span class="n">output_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s1">"]</span>
+</span><span id="line-210"><span class="s1">    </span><span class="se">}}</span>
+</span><span id="line-211"><span class="s1">  </span><span class="se">}}</span>
+</span><span id="line-212"><span class="se">}}</span>
+</span><span id="line-213"><span class="s1">"""</span>
+</span><span id="line-214">
+</span><span id="line-215"><span class="s1">from aw_agents.adapters.mcp import MCPAdapter</span>
+</span><span id="line-216"><span class="s1">from </span><span class="si">{</span><span class="n">import_module</span><span class="si">}</span><span class="s1"> import </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
+</span><span id="line-217">
+</span><span id="line-218">
+</span><span id="line-219"><span class="s1">def main():</span>
+</span><span id="line-220"><span class="s1">    agent = </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()</span>
+</span><span id="line-221"><span class="s1">    adapter = MCPAdapter(agent, "</span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s1">")</span>
+</span><span id="line-222"><span class="s1">    adapter.run_sync()</span>
+</span><span id="line-223">
+</span><span id="line-224">
+</span><span id="line-225"><span class="s1">if __name__ == "__main__":</span>
+</span><span id="line-226"><span class="s1">    main()</span>
+</span><span id="line-227"><span class="s1">'''</span>
+</span><span id="line-228">
+</span><span id="line-229">    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">script_content</span><span class="p">)</span>
+</span><span id="line-230">    <span class="n">output_path</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
+</span><span id="line-231">
+</span><span id="line-232">    <span class="k">return</span> <span class="n">output_path</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -397,7 +422,7 @@
 </footer>
     </div>
     
-    <script src="../../../_static/documentation_options.js?v=fd825880"></script>
+    <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
