@@ -45,7 +45,9 @@ def annotation_from_json_type(json_type: Any, *, items: Any = None, unknown: Any
     """
     names = json_type if isinstance(json_type, list) else [json_type]
     nullable = "null" in names
-    known = list(dict.fromkeys(t for t in names if isinstance(t, str) and t in JSON_TYPES))
+    known = list(
+        dict.fromkeys(t for t in names if isinstance(t, str) and t in JSON_TYPES)
+    )
     if not known:
         return unknown
     annotations = tuple(
