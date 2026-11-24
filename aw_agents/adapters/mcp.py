@@ -12,17 +12,8 @@ import inspect
 from typing import Annotated, Any, Callable, Dict, Literal, Optional
 from pathlib import Path
 
+from aw_agents.adapters.json_types import annotation_from_json_type
 from aw_agents.base import AgentBase
-
-#: JSON-schema ``type`` -> the Python annotation FastMCP turns back into that type.
-_JSON_TYPES: Dict[str, Any] = {
-    "string": str,
-    "integer": int,
-    "number": float,
-    "boolean": bool,
-    "array": list,
-    "object": dict,
-}
 
 
 def _format_success_response(result: Dict[str, Any]) -> str:
@@ -59,9 +50,10 @@ def _annotation_from_schema(spec: Dict[str, Any]) -> Any:
     """The Python annotation that FastMCP turns back into the JSON-schema ``spec``.
 
     Keeps what a bare type would lose: array item types (recursively) and enums. A
-    union ``type`` (a list, as in ``["string", "null"]``) takes its first known
-    non-null type, made ``Optional`` when ``"null"`` is listed; an unknown type is
-    ``Any``.
+    union ``type`` (a list, as in ``["string", "integer"]``) is the ``Union`` of its
+    known non-null types, made ``Optional`` when ``"null"`` is listed; a single type
+    stays plain, and an unknown type is ``Any`` (see
+    :func:`aw_agents.adapters.json_types.annotation_from_json_type`).
 
     >>> _annotation_from_schema({"type": "array", "items": {"type": "string"}})
     list[str]
@@ -69,23 +61,18 @@ def _annotation_from_schema(spec: Dict[str, Any]) -> Any:
     typing.Literal['a', 'b']
     >>> _annotation_from_schema({"type": ["string", "null"]})
     typing.Optional[str]
+    >>> _annotation_from_schema({"type": ["string", "integer"]})
+    typing.Union[str, int]
     >>> _annotation_from_schema({})
     typing.Any
     """
     if spec.get("enum"):
         return Literal[tuple(spec["enum"])]
-    json_type = spec.get("type")
-    nullable = False
-    if isinstance(json_type, list):
-        nullable = "null" in json_type
-        json_type = next((t for t in json_type if t in _JSON_TYPES), None)
-    if json_type == "array" and isinstance(spec.get("items"), dict):
-        annotation = list[_annotation_from_schema(spec["items"])]
-    elif isinstance(json_type, str):
-        annotation = _JSON_TYPES.get(json_type, Any)
-    else:
-        annotation = Any
-    return Optional[annotation] if nullable and annotation is not Any else annotation
+    items = spec.get("items")
+    return annotation_from_json_type(
+        spec.get("type"),
+        items=_annotation_from_schema(items) if isinstance(items, dict) else None,
+    )
 
 
 def _signature_from_schema(schema: Dict[str, Any]) -> inspect.Signature:
