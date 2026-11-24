@@ -1,4 +1,4 @@
-> built 2026-11-24 01:07 UTC from b69b86d (main) · aw_agents 0.1.5. Details: build_info.json
+> built 2026-11-24 04:47 UTC from 24434e1 (main) · aw_agents 0.1.6. Details: build_info.json
 
 # index.html.md
 
@@ -1693,18 +1693,16 @@ Utils for aw_agents
 
 # About this build
 
-This documentation was built on **2026-11-24 01:07 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/b69b86d8a575fd1267be1412ce0201494ea0ec70"><code>b69b86d</code></a> on branch <code>main</code>, for **aw_agents 0.1.5** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-24 04:47 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee"><code>24434e1</code></a> on branch <code>main</code>, for **aw_agents 0.1.6** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.5) is behind the latest release on PyPI (0.1.6): `pip install aw_agents` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/aw_agents/commit/b69b86d8a575fd1267be1412ce0201494ea0ec70"><code>b69b86d8a575fd1267be1412ce0201494ea0ec70</code></a> |
+| Commit              | <a href="https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee"><code>24434e15e37da2512d91cdbce7b4fd60b70879ee</code></a> |
 | Branch              | <code>main</code>                                                                                                                                       |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -1715,9 +1713,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/aw_agents</code>                                                              |
-| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45302257698">45302257698</a>     |
+| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45328572564">45328572564</a>     |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>b69b86d8a575fd1267be1412ce0201494ea0ec70</code> (in the history of the built commit) |
+| Event commit | <code>24434e15e37da2512d91cdbce7b4fd60b70879ee</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1742,13 +1740,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/aw_agents/0.1.6/">0.1.6</a>, newer than the documented version (0.1.5).
+Latest release: <a href="https://pypi.org/project/aw_agents/0.1.6/">0.1.6</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/aw_agents && cd aw_agents
-git checkout b69b86d8a575fd1267be1412ce0201494ea0ec70
+git checkout 24434e15e37da2512d91cdbce7b4fd60b70879ee
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-24T01:07:32Z",
+  "built_at": "2026-11-24T04:47:28Z",
   "package": {
     "name": "aw_agents",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "display_name": "aw_agents",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "b69b86d8a575fd1267be1412ce0201494ea0ec70",
-    "short_commit": "b69b86d",
+    "commit": "24434e15e37da2512d91cdbce7b4fd60b70879ee",
+    "short_commit": "24434e1",
     "branch": "main",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/addaix/aw_agents",
-    "commit_url": "https://github.com/addaix/aw_agents/commit/b69b86d8a575fd1267be1412ce0201494ea0ec70",
+    "commit_url": "https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "addaix/aw_agents",
-    "sha": "b69b86d8a575fd1267be1412ce0201494ea0ec70",
+    "sha": "24434e15e37da2512d91cdbce7b4fd60b70879ee",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "45302257698",
-    "run_url": "https://github.com/addaix/aw_agents/actions/runs/45302257698",
+    "run_id": "45328572564",
+    "run_url": "https://github.com/addaix/aw_agents/actions/runs/45328572564",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -61,15 +61,13 @@
   "pypi": {
     "checked": true,
     "latest": "0.1.6",
-    "relation": "behind",
+    "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/addaix/aw_agents && cd aw_agents\ngit checkout b69b86d8a575fd1267be1412ce0201494ea0ec70\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/addaix/aw_agents && cd aw_agents\ngit checkout 24434e15e37da2512d91cdbce7b4fd60b70879ee\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": false,
-    "notes": [
-      "The documented version (0.1.5) is behind the latest release on PyPI (0.1.6): `pip install aw_agents` gives newer code than these docs describe."
-    ]
+    "aligned": true,
+    "notes": []
   }
 }
