@@ -190,282 +190,279 @@
 </span><span id="line-23">        <span class="s2">"Warning: fastapi not installed. Install with: pip install fastapi uvicorn pydantic"</span>
 </span><span id="line-24">    <span class="p">)</span>
 </span><span id="line-25">
-</span><span id="line-26"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
-</span><span id="line-27">
+</span><span id="line-26"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.adapters.json_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotation_from_json_type</span>
+</span><span id="line-27"><span class="kn">from</span><span class="w"> </span><span class="nn">aw_agents.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 </span><span id="line-28">
+</span><span id="line-29">
 <div class="viewcode-block" id="OpenAPIAdapter">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.openapi.html#aw_agents.OpenAPIAdapter">[docs]</a>
-</span><span id="line-29"><span class="k">class</span><span class="w"> </span><span class="nc">OpenAPIAdapter</span><span class="p">:</span>
-</span><span id="line-30"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-31"><span class="sd">    Adapter to expose an AgentBase as a FastAPI/OpenAPI service.</span>
-</span><span id="line-32">
-</span><span id="line-33"><span class="sd">    Usage:</span>
-</span><span id="line-34"><span class="sd">        agent = YourAgent()</span>
-</span><span id="line-35"><span class="sd">        adapter = OpenAPIAdapter(agent, title="Your Agent API")</span>
-</span><span id="line-36"><span class="sd">        adapter.run(port=8000)</span>
-</span><span id="line-37"><span class="sd">    """</span>
-</span><span id="line-38">
-</span><span id="line-39">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="line-40">        <span class="bp">self</span><span class="p">,</span>
-</span><span id="line-41">        <span class="n">agent</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
-</span><span id="line-42">        <span class="o">*</span><span class="p">,</span>
-</span><span id="line-43">        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"AI Agent API"</span><span class="p">,</span>
-</span><span id="line-44">        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"AI Agent exposed via OpenAPI"</span><span class="p">,</span>
-</span><span id="line-45">        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1.0.0"</span><span class="p">,</span>
-</span><span id="line-46">        <span class="n">server_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-47">    <span class="p">):</span>
-</span><span id="line-48"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-49"><span class="sd">        Initialize OpenAPI adapter.</span>
-</span><span id="line-50">
-</span><span id="line-51"><span class="sd">        Args:</span>
-</span><span id="line-52"><span class="sd">            agent: Agent instance to wrap</span>
-</span><span id="line-53"><span class="sd">            title: API title</span>
-</span><span id="line-54"><span class="sd">            description: API description</span>
-</span><span id="line-55"><span class="sd">            version: API version</span>
-</span><span id="line-56"><span class="sd">            server_url: Optional server URL for OpenAPI schema (e.g., for ngrok)</span>
-</span><span id="line-57"><span class="sd">        """</span>
-</span><span id="line-58">        <span class="k">if</span> <span class="ow">not</span> <span class="n">FASTAPI_AVAILABLE</span><span class="p">:</span>
-</span><span id="line-59">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-</span><span id="line-60">                <span class="s2">"fastapi required. Install with: pip install fastapi uvicorn pydantic"</span>
-</span><span id="line-61">            <span class="p">)</span>
-</span><span id="line-62">
-</span><span id="line-63">        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
-</span><span id="line-64">
-</span><span id="line-65">        <span class="c1"># Get metadata from agent</span>
-</span><span id="line-66">        <span class="n">metadata</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
-</span><span id="line-67">
-</span><span id="line-68">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
-</span><span id="line-69">            <span class="n">title</span><span class="o">=</span><span class="n">title</span> <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"AI Agent API"</span><span class="p">),</span>
-</span><span id="line-70">            <span class="n">description</span><span class="o">=</span><span class="n">description</span>
-</span><span id="line-71">            <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"AI Agent exposed via OpenAPI"</span><span class="p">),</span>
-</span><span id="line-72">            <span class="n">version</span><span class="o">=</span><span class="n">version</span> <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">,</span> <span class="s2">"1.0.0"</span><span class="p">),</span>
-</span><span id="line-73">        <span class="p">)</span>
-</span><span id="line-74">
-</span><span id="line-75">        <span class="c1"># Add CORS middleware</span>
-</span><span id="line-76">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
-</span><span id="line-77">            <span class="n">CORSMiddleware</span><span class="p">,</span>
-</span><span id="line-78">            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>  <span class="c1"># Restrict in production</span>
-</span><span id="line-79">            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-80">            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>
-</span><span id="line-81">            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>
-</span><span id="line-82">        <span class="p">)</span>
-</span><span id="line-83">
-</span><span id="line-84">        <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span> <span class="o">=</span> <span class="n">server_url</span>
-</span><span id="line-85">        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_routes</span><span class="p">()</span>
-</span><span id="line-86">
-</span><span id="line-87">    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-88"><span class="w">        </span><span class="sd">"""Set up FastAPI routes from agent tools."""</span>
-</span><span id="line-89">
-</span><span id="line-90">        <span class="c1"># Root endpoint</span>
-</span><span id="line-91">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
-</span><span id="line-92">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">root</span><span class="p">():</span>
-</span><span id="line-93"><span class="w">            </span><span class="sd">"""Root endpoint with API information."""</span>
-</span><span id="line-94">            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
-</span><span id="line-95">            <span class="k">return</span> <span class="p">{</span>
-</span><span id="line-96">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
-</span><span id="line-97">                <span class="s2">"version"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">),</span>
-</span><span id="line-98">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">),</span>
-</span><span id="line-99">                <span class="s2">"docs"</span><span class="p">:</span> <span class="s2">"/docs"</span><span class="p">,</span>
-</span><span id="line-100">                <span class="s2">"openapi"</span><span class="p">:</span> <span class="s2">"/openapi.json"</span><span class="p">,</span>
-</span><span id="line-101">            <span class="p">}</span>
-</span><span id="line-102">
-</span><span id="line-103">        <span class="c1"># Health check</span>
-</span><span id="line-104">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/health"</span><span class="p">)</span>
-</span><span id="line-105">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">health_check</span><span class="p">():</span>
-</span><span id="line-106"><span class="w">            </span><span class="sd">"""Health check endpoint."""</span>
-</span><span id="line-107">            <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"healthy"</span><span class="p">}</span>
-</span><span id="line-108">
-</span><span id="line-109">        <span class="c1"># Create endpoints for each tool</span>
-</span><span id="line-110">        <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">get_tools</span><span class="p">():</span>
-</span><span id="line-111">            <span class="bp">self</span><span class="o">.</span><span class="n">_create_tool_endpoint</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
-</span><span id="line-112">
-</span><span id="line-113">    <span class="k">def</span><span class="w"> </span><span class="nf">_create_tool_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="line-114"><span class="w">        </span><span class="sd">"""Create a FastAPI endpoint for a tool."""</span>
-</span><span id="line-115">        <span class="n">name</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
-</span><span id="line-116">        <span class="n">description</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"description"</span><span class="p">]</span>
-</span><span id="line-117">        <span class="n">parameters</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">]</span>
-</span><span id="line-118">
-</span><span id="line-119">        <span class="c1"># Create Pydantic model for request</span>
-</span><span id="line-120">        <span class="n">request_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_pydantic_model</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_request"</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
-</span><span id="line-121">
-</span><span id="line-122">        <span class="c1"># Create Pydantic model for response</span>
-</span><span id="line-123">        <span class="n">response_model</span> <span class="o">=</span> <span class="n">create_model</span><span class="p">(</span>
-</span><span id="line-124">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_response"</span><span class="p">,</span>
-</span><span id="line-125">            <span class="n">success</span><span class="o">=</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Whether operation succeeded"</span><span class="p">)),</span>
-</span><span id="line-126">            <span class="n">data</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Result data"</span><span class="p">)),</span>
-</span><span id="line-127">            <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Message"</span><span class="p">)),</span>
-</span><span id="line-128">            <span class="n">warnings</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Warnings"</span><span class="p">)),</span>
-</span><span id="line-129">            <span class="n">metadata</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Metadata"</span><span class="p">)),</span>
-</span><span id="line-130">        <span class="p">)</span>
-</span><span id="line-131">
-</span><span id="line-132">        <span class="c1"># Create endpoint</span>
-</span><span id="line-133">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-</span><span id="line-134">            <span class="sa">f</span><span class="s2">"/</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span><span class="w"> </span><span class="s1">'-'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-</span><span id="line-135">            <span class="n">response_model</span><span class="o">=</span><span class="n">response_model</span><span class="p">,</span>
-</span><span id="line-136">            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
-</span><span id="line-137">        <span class="p">)</span>
-</span><span id="line-138">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tool_endpoint</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">request_model</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
-</span><span id="line-139">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-140">                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
-</span><span id="line-141">                <span class="k">return</span> <span class="n">result</span>
-</span><span id="line-142">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="line-143">                <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-</span><span id="line-144">
-</span><span id="line-145">        <span class="c1"># Store endpoint reference (needed for FastAPI)</span>
-</span><span id="line-146">        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"_endpoint_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">tool_endpoint</span><span class="p">)</span>
-</span><span id="line-147">
-</span><span id="line-148">    <span class="k">def</span><span class="w"> </span><span class="nf">_create_pydantic_model</span><span class="p">(</span>
-</span><span id="line-149">        <span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">json_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-</span><span id="line-150">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]:</span>
-</span><span id="line-151"><span class="w">        </span><span class="sd">"""Create a Pydantic model from JSON schema."""</span>
-</span><span id="line-152">        <span class="n">properties</span> <span class="o">=</span> <span class="n">json_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">,</span> <span class="p">{})</span>
-</span><span id="line-153">        <span class="n">required</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">json_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"required"</span><span class="p">,</span> <span class="p">[]))</span>
-</span><span id="line-154">
-</span><span id="line-155">        <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-156">        <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_schema</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-157">            <span class="n">prop_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_type_to_python</span><span class="p">(</span><span class="n">prop_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"string"</span><span class="p">))</span>
-</span><span id="line-158">            <span class="n">prop_desc</span> <span class="o">=</span> <span class="n">prop_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-</span><span id="line-159">
-</span><span id="line-160">            <span class="k">if</span> <span class="n">prop_name</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
-</span><span id="line-161">                <span class="n">fields</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">prop_type</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">prop_desc</span><span class="p">))</span>
-</span><span id="line-162">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-163">                <span class="n">fields</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-164">                    <span class="n">Optional</span><span class="p">[</span><span class="n">prop_type</span><span class="p">],</span>
-</span><span id="line-165">                    <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">prop_desc</span><span class="p">),</span>
-</span><span id="line-166">                <span class="p">)</span>
-</span><span id="line-167">
-</span><span id="line-168">        <span class="k">return</span> <span class="n">create_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-</span><span id="line-169">
-</span><span id="line-170">    <span class="k">def</span><span class="w"> </span><span class="nf">_json_type_to_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
-</span><span id="line-171"><span class="w">        </span><span class="sd">"""Convert JSON schema type to Python type."""</span>
-</span><span id="line-172">        <span class="n">type_map</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-173">            <span class="s2">"string"</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-174">            <span class="s2">"integer"</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="line-175">            <span class="s2">"number"</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="line-176">            <span class="s2">"boolean"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="line-177">            <span class="s2">"array"</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-</span><span id="line-178">            <span class="s2">"object"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="line-179">        <span class="p">}</span>
-</span><span id="line-180">        <span class="k">return</span> <span class="n">type_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">json_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-</span><span id="line-181">
-</span><span id="line-182">    <span class="k">def</span><span class="w"> </span><span class="nf">_customize_openapi_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="line-183"><span class="w">        </span><span class="sd">"""Add servers field to OpenAPI schema."""</span>
-</span><span id="line-184">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span><span class="p">:</span>
-</span><span id="line-185">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span>
+</span><span id="line-30"><span class="k">class</span><span class="w"> </span><span class="nc">OpenAPIAdapter</span><span class="p">:</span>
+</span><span id="line-31"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-32"><span class="sd">    Adapter to expose an AgentBase as a FastAPI/OpenAPI service.</span>
+</span><span id="line-33">
+</span><span id="line-34"><span class="sd">    Usage:</span>
+</span><span id="line-35"><span class="sd">        agent = YourAgent()</span>
+</span><span id="line-36"><span class="sd">        adapter = OpenAPIAdapter(agent, title="Your Agent API")</span>
+</span><span id="line-37"><span class="sd">        adapter.run(port=8000)</span>
+</span><span id="line-38"><span class="sd">    """</span>
+</span><span id="line-39">
+</span><span id="line-40">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="line-41">        <span class="bp">self</span><span class="p">,</span>
+</span><span id="line-42">        <span class="n">agent</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+</span><span id="line-43">        <span class="o">*</span><span class="p">,</span>
+</span><span id="line-44">        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"AI Agent API"</span><span class="p">,</span>
+</span><span id="line-45">        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"AI Agent exposed via OpenAPI"</span><span class="p">,</span>
+</span><span id="line-46">        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1.0.0"</span><span class="p">,</span>
+</span><span id="line-47">        <span class="n">server_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-48">    <span class="p">):</span>
+</span><span id="line-49"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-50"><span class="sd">        Initialize OpenAPI adapter.</span>
+</span><span id="line-51">
+</span><span id="line-52"><span class="sd">        Args:</span>
+</span><span id="line-53"><span class="sd">            agent: Agent instance to wrap</span>
+</span><span id="line-54"><span class="sd">            title: API title</span>
+</span><span id="line-55"><span class="sd">            description: API description</span>
+</span><span id="line-56"><span class="sd">            version: API version</span>
+</span><span id="line-57"><span class="sd">            server_url: Optional server URL for OpenAPI schema (e.g., for ngrok)</span>
+</span><span id="line-58"><span class="sd">        """</span>
+</span><span id="line-59">        <span class="k">if</span> <span class="ow">not</span> <span class="n">FASTAPI_AVAILABLE</span><span class="p">:</span>
+</span><span id="line-60">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+</span><span id="line-61">                <span class="s2">"fastapi required. Install with: pip install fastapi uvicorn pydantic"</span>
+</span><span id="line-62">            <span class="p">)</span>
+</span><span id="line-63">
+</span><span id="line-64">        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
+</span><span id="line-65">
+</span><span id="line-66">        <span class="c1"># Get metadata from agent</span>
+</span><span id="line-67">        <span class="n">metadata</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+</span><span id="line-68">
+</span><span id="line-69">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+</span><span id="line-70">            <span class="n">title</span><span class="o">=</span><span class="n">title</span> <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"AI Agent API"</span><span class="p">),</span>
+</span><span id="line-71">            <span class="n">description</span><span class="o">=</span><span class="n">description</span>
+</span><span id="line-72">            <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"AI Agent exposed via OpenAPI"</span><span class="p">),</span>
+</span><span id="line-73">            <span class="n">version</span><span class="o">=</span><span class="n">version</span> <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">,</span> <span class="s2">"1.0.0"</span><span class="p">),</span>
+</span><span id="line-74">        <span class="p">)</span>
+</span><span id="line-75">
+</span><span id="line-76">        <span class="c1"># Add CORS middleware</span>
+</span><span id="line-77">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+</span><span id="line-78">            <span class="n">CORSMiddleware</span><span class="p">,</span>
+</span><span id="line-79">            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>  <span class="c1"># Restrict in production</span>
+</span><span id="line-80">            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-81">            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>
+</span><span id="line-82">            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>
+</span><span id="line-83">        <span class="p">)</span>
+</span><span id="line-84">
+</span><span id="line-85">        <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span> <span class="o">=</span> <span class="n">server_url</span>
+</span><span id="line-86">        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_routes</span><span class="p">()</span>
+</span><span id="line-87">
+</span><span id="line-88">    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-89"><span class="w">        </span><span class="sd">"""Set up FastAPI routes from agent tools."""</span>
+</span><span id="line-90">
+</span><span id="line-91">        <span class="c1"># Root endpoint</span>
+</span><span id="line-92">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+</span><span id="line-93">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">root</span><span class="p">():</span>
+</span><span id="line-94"><span class="w">            </span><span class="sd">"""Root endpoint with API information."""</span>
+</span><span id="line-95">            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+</span><span id="line-96">            <span class="k">return</span> <span class="p">{</span>
+</span><span id="line-97">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
+</span><span id="line-98">                <span class="s2">"version"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">),</span>
+</span><span id="line-99">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">),</span>
+</span><span id="line-100">                <span class="s2">"docs"</span><span class="p">:</span> <span class="s2">"/docs"</span><span class="p">,</span>
+</span><span id="line-101">                <span class="s2">"openapi"</span><span class="p">:</span> <span class="s2">"/openapi.json"</span><span class="p">,</span>
+</span><span id="line-102">            <span class="p">}</span>
+</span><span id="line-103">
+</span><span id="line-104">        <span class="c1"># Health check</span>
+</span><span id="line-105">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/health"</span><span class="p">)</span>
+</span><span id="line-106">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">health_check</span><span class="p">():</span>
+</span><span id="line-107"><span class="w">            </span><span class="sd">"""Health check endpoint."""</span>
+</span><span id="line-108">            <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"healthy"</span><span class="p">}</span>
+</span><span id="line-109">
+</span><span id="line-110">        <span class="c1"># Create endpoints for each tool</span>
+</span><span id="line-111">        <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">get_tools</span><span class="p">():</span>
+</span><span id="line-112">            <span class="bp">self</span><span class="o">.</span><span class="n">_create_tool_endpoint</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
+</span><span id="line-113">
+</span><span id="line-114">    <span class="k">def</span><span class="w"> </span><span class="nf">_create_tool_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="line-115"><span class="w">        </span><span class="sd">"""Create a FastAPI endpoint for a tool."""</span>
+</span><span id="line-116">        <span class="n">name</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+</span><span id="line-117">        <span class="n">description</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"description"</span><span class="p">]</span>
+</span><span id="line-118">        <span class="n">parameters</span> <span class="o">=</span> <span class="n">tool</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">]</span>
+</span><span id="line-119">
+</span><span id="line-120">        <span class="c1"># Create Pydantic model for request</span>
+</span><span id="line-121">        <span class="n">request_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_pydantic_model</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_request"</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+</span><span id="line-122">
+</span><span id="line-123">        <span class="c1"># Create Pydantic model for response</span>
+</span><span id="line-124">        <span class="n">response_model</span> <span class="o">=</span> <span class="n">create_model</span><span class="p">(</span>
+</span><span id="line-125">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_response"</span><span class="p">,</span>
+</span><span id="line-126">            <span class="n">success</span><span class="o">=</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Whether operation succeeded"</span><span class="p">)),</span>
+</span><span id="line-127">            <span class="n">data</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Result data"</span><span class="p">)),</span>
+</span><span id="line-128">            <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Message"</span><span class="p">)),</span>
+</span><span id="line-129">            <span class="n">warnings</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Warnings"</span><span class="p">)),</span>
+</span><span id="line-130">            <span class="n">metadata</span><span class="o">=</span><span class="p">(</span><span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Metadata"</span><span class="p">)),</span>
+</span><span id="line-131">        <span class="p">)</span>
+</span><span id="line-132">
+</span><span id="line-133">        <span class="c1"># Create endpoint</span>
+</span><span id="line-134">        <span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+</span><span id="line-135">            <span class="sa">f</span><span class="s2">"/</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span><span class="w"> </span><span class="s1">'-'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="line-136">            <span class="n">response_model</span><span class="o">=</span><span class="n">response_model</span><span class="p">,</span>
+</span><span id="line-137">            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+</span><span id="line-138">        <span class="p">)</span>
+</span><span id="line-139">        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tool_endpoint</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">request_model</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+</span><span id="line-140">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-141">                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+</span><span id="line-142">                <span class="k">return</span> <span class="n">result</span>
+</span><span id="line-143">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="line-144">                <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</span><span id="line-145">
+</span><span id="line-146">        <span class="c1"># Store endpoint reference (needed for FastAPI)</span>
+</span><span id="line-147">        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"_endpoint_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">tool_endpoint</span><span class="p">)</span>
+</span><span id="line-148">
+</span><span id="line-149">    <span class="k">def</span><span class="w"> </span><span class="nf">_create_pydantic_model</span><span class="p">(</span>
+</span><span id="line-150">        <span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">json_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</span><span id="line-151">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]:</span>
+</span><span id="line-152"><span class="w">        </span><span class="sd">"""Create a Pydantic model from JSON schema."""</span>
+</span><span id="line-153">        <span class="n">properties</span> <span class="o">=</span> <span class="n">json_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">,</span> <span class="p">{})</span>
+</span><span id="line-154">        <span class="n">required</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">json_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"required"</span><span class="p">,</span> <span class="p">[]))</span>
+</span><span id="line-155">
+</span><span id="line-156">        <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-157">        <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_schema</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-158">            <span class="n">prop_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_type_to_python</span><span class="p">(</span><span class="n">prop_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"string"</span><span class="p">))</span>
+</span><span id="line-159">            <span class="n">prop_desc</span> <span class="o">=</span> <span class="n">prop_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+</span><span id="line-160">
+</span><span id="line-161">            <span class="k">if</span> <span class="n">prop_name</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
+</span><span id="line-162">                <span class="n">fields</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">prop_type</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">prop_desc</span><span class="p">))</span>
+</span><span id="line-163">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-164">                <span class="n">fields</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-165">                    <span class="n">Optional</span><span class="p">[</span><span class="n">prop_type</span><span class="p">],</span>
+</span><span id="line-166">                    <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">prop_desc</span><span class="p">),</span>
+</span><span id="line-167">                <span class="p">)</span>
+</span><span id="line-168">
+</span><span id="line-169">        <span class="k">return</span> <span class="n">create_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+</span><span id="line-170">
+</span><span id="line-171">    <span class="k">def</span><span class="w"> </span><span class="nf">_json_type_to_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="line-172"><span class="w">        </span><span class="sd">"""Convert a JSON-schema type (one name, or a union list of names) to a Python type.</span>
+</span><span id="line-173">
+</span><span id="line-174"><span class="sd">        An unknown type is ``str``; a union is the ``Union`` of its known types (see</span>
+</span><span id="line-175"><span class="sd">        :func:`aw_agents.adapters.json_types.annotation_from_json_type`).</span>
+</span><span id="line-176"><span class="sd">        """</span>
+</span><span id="line-177">        <span class="k">return</span> <span class="n">annotation_from_json_type</span><span class="p">(</span><span class="n">json_type</span><span class="p">,</span> <span class="n">unknown</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</span><span id="line-178">
+</span><span id="line-179">    <span class="k">def</span><span class="w"> </span><span class="nf">_customize_openapi_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+</span><span id="line-180"><span class="w">        </span><span class="sd">"""Add servers field to OpenAPI schema."""</span>
+</span><span id="line-181">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span><span class="p">:</span>
+</span><span id="line-182">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span>
+</span><span id="line-183">
+</span><span id="line-184">        <span class="c1"># Use get_openapi to generate the schema (instead of calling self.app.openapi())</span>
+</span><span id="line-185">        <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.openapi.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_openapi</span>
 </span><span id="line-186">
-</span><span id="line-187">        <span class="c1"># Use get_openapi to generate the schema (instead of calling self.app.openapi())</span>
-</span><span id="line-188">        <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.openapi.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_openapi</span>
-</span><span id="line-189">
-</span><span id="line-190">        <span class="n">openapi_schema</span> <span class="o">=</span> <span class="n">get_openapi</span><span class="p">(</span>
-</span><span id="line-191">            <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
-</span><span id="line-192">            <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
-</span><span id="line-193">            <span class="n">description</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-</span><span id="line-194">            <span class="n">routes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">routes</span><span class="p">,</span>
-</span><span id="line-195">        <span class="p">)</span>
-</span><span id="line-196">
-</span><span id="line-197">        <span class="c1"># Use localhost instead of 0.0.0.0 for the schema URL</span>
-</span><span id="line-198">        <span class="c1"># 0.0.0.0 is a bind address, not a valid URL</span>
-</span><span id="line-199">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span><span class="p">:</span>
-</span><span id="line-200">            <span class="n">server_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span>
-</span><span id="line-201">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-202">            <span class="n">schema_host</span> <span class="o">=</span> <span class="s2">"localhost"</span> <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s2">"0.0.0.0"</span> <span class="k">else</span> <span class="n">host</span>
-</span><span id="line-203">            <span class="n">server_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="n">schema_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-204">
-</span><span id="line-205">        <span class="n">openapi_schema</span><span class="p">[</span><span class="s2">"servers"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="line-206">            <span class="p">{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">server_url</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Development server"</span><span class="p">}</span>
-</span><span id="line-207">        <span class="p">]</span>
+</span><span id="line-187">        <span class="n">openapi_schema</span> <span class="o">=</span> <span class="n">get_openapi</span><span class="p">(</span>
+</span><span id="line-188">            <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+</span><span id="line-189">            <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+</span><span id="line-190">            <span class="n">description</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+</span><span id="line-191">            <span class="n">routes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">routes</span><span class="p">,</span>
+</span><span id="line-192">        <span class="p">)</span>
+</span><span id="line-193">
+</span><span id="line-194">        <span class="c1"># Use localhost instead of 0.0.0.0 for the schema URL</span>
+</span><span id="line-195">        <span class="c1"># 0.0.0.0 is a bind address, not a valid URL</span>
+</span><span id="line-196">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span><span class="p">:</span>
+</span><span id="line-197">            <span class="n">server_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_url</span>
+</span><span id="line-198">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-199">            <span class="n">schema_host</span> <span class="o">=</span> <span class="s2">"localhost"</span> <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s2">"0.0.0.0"</span> <span class="k">else</span> <span class="n">host</span>
+</span><span id="line-200">            <span class="n">server_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="n">schema_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-201">
+</span><span id="line-202">        <span class="n">openapi_schema</span><span class="p">[</span><span class="s2">"servers"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="line-203">            <span class="p">{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">server_url</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Development server"</span><span class="p">}</span>
+</span><span id="line-204">        <span class="p">]</span>
+</span><span id="line-205">
+</span><span id="line-206">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span> <span class="o">=</span> <span class="n">openapi_schema</span>
+</span><span id="line-207">        <span class="k">return</span> <span class="n">openapi_schema</span>
 </span><span id="line-208">
-</span><span id="line-209">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi_schema</span> <span class="o">=</span> <span class="n">openapi_schema</span>
-</span><span id="line-210">        <span class="k">return</span> <span class="n">openapi_schema</span>
-</span><span id="line-211">
 <div class="viewcode-block" id="OpenAPIAdapter.run">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.openapi.html#aw_agents.OpenAPIAdapter.run">[docs]</a>
-</span><span id="line-212">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0.0.0.0"</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-213"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-214"><span class="sd">        Run the FastAPI server.</span>
-</span><span id="line-215">
-</span><span id="line-216"><span class="sd">        Args:</span>
-</span><span id="line-217"><span class="sd">            host: Host to bind to</span>
-</span><span id="line-218"><span class="sd">            port: Port to bind to</span>
-</span><span id="line-219"><span class="sd">            **kwargs: Additional uvicorn arguments</span>
-</span><span id="line-220"><span class="sd">        """</span>
-</span><span id="line-221">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_customize_openapi_schema</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
-</span><span id="line-222">        <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</span><span id="line-209">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0.0.0.0"</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-210"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-211"><span class="sd">        Run the FastAPI server.</span>
+</span><span id="line-212">
+</span><span id="line-213"><span class="sd">        Args:</span>
+</span><span id="line-214"><span class="sd">            host: Host to bind to</span>
+</span><span id="line-215"><span class="sd">            port: Port to bind to</span>
+</span><span id="line-216"><span class="sd">            **kwargs: Additional uvicorn arguments</span>
+</span><span id="line-217"><span class="sd">        """</span>
+</span><span id="line-218">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_customize_openapi_schema</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+</span><span id="line-219">        <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
-</span><span id="line-223">
-</span><span id="line-224">
+</span><span id="line-220">
+</span><span id="line-221">
 <div class="viewcode-block" id="create_api_server_script">
 <a class="viewcode-back" href="../../../_autosummary/aw_agents.adapters.openapi.html#aw_agents.create_api_server_script">[docs]</a>
-</span><span id="line-225"><span class="k">def</span><span class="w"> </span><span class="nf">create_api_server_script</span><span class="p">(</span>
-</span><span id="line-226">    <span class="n">agent_class</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span>
-</span><span id="line-227"><span class="p">):</span>
-</span><span id="line-228"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-229"><span class="sd">    Generate an API server script for an agent.</span>
-</span><span id="line-230">
-</span><span id="line-231"><span class="sd">    Args:</span>
-</span><span id="line-232"><span class="sd">        agent_class: Agent class to wrap</span>
-</span><span id="line-233"><span class="sd">        output_path: Path to write the script</span>
-</span><span id="line-234"><span class="sd">        default_port: Default port for the server</span>
-</span><span id="line-235"><span class="sd">    """</span>
-</span><span id="line-236">    <span class="c1"># Determine module path for import</span>
-</span><span id="line-237">    <span class="n">agent_module</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__module__</span>
-</span><span id="line-238">    <span class="k">if</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"aw_agents."</span><span class="p">):</span>
-</span><span id="line-239">        <span class="c1"># Extract the submodule (e.g., 'agents.download' from 'aw_agents.agents.download.agent')</span>
-</span><span id="line-240">        <span class="n">parts</span> <span class="o">=</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
-</span><span id="line-241">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-</span><span id="line-242">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># aw_agents.agents.download</span>
-</span><span id="line-243">        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span id="line-244">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># aw_agents.agents</span>
-</span><span id="line-245">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-246">            <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
-</span><span id="line-247">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-248">        <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
+</span><span id="line-222"><span class="k">def</span><span class="w"> </span><span class="nf">create_api_server_script</span><span class="p">(</span>
+</span><span id="line-223">    <span class="n">agent_class</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span>
+</span><span id="line-224"><span class="p">):</span>
+</span><span id="line-225"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-226"><span class="sd">    Generate an API server script for an agent.</span>
+</span><span id="line-227">
+</span><span id="line-228"><span class="sd">    Args:</span>
+</span><span id="line-229"><span class="sd">        agent_class: Agent class to wrap</span>
+</span><span id="line-230"><span class="sd">        output_path: Path to write the script</span>
+</span><span id="line-231"><span class="sd">        default_port: Default port for the server</span>
+</span><span id="line-232"><span class="sd">    """</span>
+</span><span id="line-233">    <span class="c1"># Determine module path for import</span>
+</span><span id="line-234">    <span class="n">agent_module</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__module__</span>
+</span><span id="line-235">    <span class="k">if</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"aw_agents."</span><span class="p">):</span>
+</span><span id="line-236">        <span class="c1"># Extract the submodule (e.g., 'agents.download' from 'aw_agents.agents.download.agent')</span>
+</span><span id="line-237">        <span class="n">parts</span> <span class="o">=</span> <span class="n">agent_module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+</span><span id="line-238">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+</span><span id="line-239">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># aw_agents.agents.download</span>
+</span><span id="line-240">        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+</span><span id="line-241">            <span class="n">import_module</span> <span class="o">=</span> <span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># aw_agents.agents</span>
+</span><span id="line-242">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-243">            <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
+</span><span id="line-244">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-245">        <span class="n">import_module</span> <span class="o">=</span> <span class="n">agent_module</span>
+</span><span id="line-246">
+</span><span id="line-247">    <span class="n">script_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'''"""</span>
+</span><span id="line-248"><span class="s1">FastAPI Server for </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
 </span><span id="line-249">
-</span><span id="line-250">    <span class="n">script_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'''"""</span>
-</span><span id="line-251"><span class="s1">FastAPI Server for </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
-</span><span id="line-252">
-</span><span id="line-253"><span class="s1">Auto-generated API server script.</span>
+</span><span id="line-250"><span class="s1">Auto-generated API server script.</span>
+</span><span id="line-251">
+</span><span id="line-252"><span class="s1">To run:</span>
+</span><span id="line-253"><span class="s1">    python </span><span class="si">{</span><span class="n">output_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> [--port PORT]</span>
 </span><span id="line-254">
-</span><span id="line-255"><span class="s1">To run:</span>
-</span><span id="line-256"><span class="s1">    python </span><span class="si">{</span><span class="n">output_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> [--port PORT]</span>
-</span><span id="line-257">
-</span><span id="line-258"><span class="s1">To use with ChatGPT Custom GPT:</span>
-</span><span id="line-259"><span class="s1">1. Start this server</span>
-</span><span id="line-260"><span class="s1">2. Go to https://chat.openai.com/gpts/editor</span>
-</span><span id="line-261"><span class="s1">3. Create a Custom GPT</span>
-</span><span id="line-262"><span class="s1">4. Add action using schema from: http://localhost:</span><span class="si">{</span><span class="n">default_port</span><span class="si">}</span><span class="s1">/openapi.json</span>
-</span><span id="line-263"><span class="s1">"""</span>
-</span><span id="line-264">
-</span><span id="line-265"><span class="s1">import argparse</span>
-</span><span id="line-266"><span class="s1">from aw_agents.adapters.openapi import OpenAPIAdapter</span>
-</span><span id="line-267"><span class="s1">from </span><span class="si">{</span><span class="n">import_module</span><span class="si">}</span><span class="s1"> import </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
-</span><span id="line-268">
-</span><span id="line-269">
-</span><span id="line-270"><span class="s1">def main():</span>
-</span><span id="line-271"><span class="s1">    parser = argparse.ArgumentParser(description='Run </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> API server')</span>
-</span><span id="line-272"><span class="s1">    parser.add_argument('--port', type=int, default=</span><span class="si">{</span><span class="n">default_port</span><span class="si">}</span><span class="s1">, help='Port to run on')</span>
-</span><span id="line-273"><span class="s1">    parser.add_argument('--host', type=str, default='0.0.0.0', help='Host to bind to')</span>
-</span><span id="line-274"><span class="s1">    args = parser.parse_args()</span>
+</span><span id="line-255"><span class="s1">To use with ChatGPT Custom GPT:</span>
+</span><span id="line-256"><span class="s1">1. Start this server</span>
+</span><span id="line-257"><span class="s1">2. Go to https://chat.openai.com/gpts/editor</span>
+</span><span id="line-258"><span class="s1">3. Create a Custom GPT</span>
+</span><span id="line-259"><span class="s1">4. Add action using schema from: http://localhost:</span><span class="si">{</span><span class="n">default_port</span><span class="si">}</span><span class="s1">/openapi.json</span>
+</span><span id="line-260"><span class="s1">"""</span>
+</span><span id="line-261">
+</span><span id="line-262"><span class="s1">import argparse</span>
+</span><span id="line-263"><span class="s1">from aw_agents.adapters.openapi import OpenAPIAdapter</span>
+</span><span id="line-264"><span class="s1">from </span><span class="si">{</span><span class="n">import_module</span><span class="si">}</span><span class="s1"> import </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span>
+</span><span id="line-265">
+</span><span id="line-266">
+</span><span id="line-267"><span class="s1">def main():</span>
+</span><span id="line-268"><span class="s1">    parser = argparse.ArgumentParser(description='Run </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> API server')</span>
+</span><span id="line-269"><span class="s1">    parser.add_argument('--port', type=int, default=</span><span class="si">{</span><span class="n">default_port</span><span class="si">}</span><span class="s1">, help='Port to run on')</span>
+</span><span id="line-270"><span class="s1">    parser.add_argument('--host', type=str, default='0.0.0.0', help='Host to bind to')</span>
+</span><span id="line-271"><span class="s1">    args = parser.parse_args()</span>
+</span><span id="line-272"><span class="s1">    </span>
+</span><span id="line-273"><span class="s1">    agent = </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()</span>
+</span><span id="line-274"><span class="s1">    adapter = OpenAPIAdapter(agent)</span>
 </span><span id="line-275"><span class="s1">    </span>
-</span><span id="line-276"><span class="s1">    agent = </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()</span>
-</span><span id="line-277"><span class="s1">    adapter = OpenAPIAdapter(agent)</span>
-</span><span id="line-278"><span class="s1">    </span>
-</span><span id="line-279"><span class="s1">    print(f"Starting </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> API server...")</span>
-</span><span id="line-280"><span class="s1">    print(f"  OpenAPI spec: http://localhost:</span><span class="se">{{</span><span class="s1">args.port</span><span class="se">}}</span><span class="s1">/openapi.json")</span>
-</span><span id="line-281"><span class="s1">    print(f"  Docs: http://localhost:</span><span class="se">{{</span><span class="s1">args.port</span><span class="se">}}</span><span class="s1">/docs")</span>
-</span><span id="line-282"><span class="s1">    </span>
-</span><span id="line-283"><span class="s1">    adapter.run(host=args.host, port=args.port)</span>
-</span><span id="line-284">
-</span><span id="line-285">
-</span><span id="line-286"><span class="s1">if __name__ == "__main__":</span>
-</span><span id="line-287"><span class="s1">    main()</span>
-</span><span id="line-288"><span class="s1">'''</span>
+</span><span id="line-276"><span class="s1">    print(f"Starting </span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> API server...")</span>
+</span><span id="line-277"><span class="s1">    print(f"  OpenAPI spec: http://localhost:</span><span class="se">{{</span><span class="s1">args.port</span><span class="se">}}</span><span class="s1">/openapi.json")</span>
+</span><span id="line-278"><span class="s1">    print(f"  Docs: http://localhost:</span><span class="se">{{</span><span class="s1">args.port</span><span class="se">}}</span><span class="s1">/docs")</span>
+</span><span id="line-279"><span class="s1">    </span>
+</span><span id="line-280"><span class="s1">    adapter.run(host=args.host, port=args.port)</span>
+</span><span id="line-281">
+</span><span id="line-282">
+</span><span id="line-283"><span class="s1">if __name__ == "__main__":</span>
+</span><span id="line-284"><span class="s1">    main()</span>
+</span><span id="line-285"><span class="s1">'''</span>
+</span><span id="line-286">
+</span><span id="line-287">    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">script_content</span><span class="p">)</span>
+</span><span id="line-288">    <span class="n">output_path</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
 </span><span id="line-289">
-</span><span id="line-290">    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">script_content</span><span class="p">)</span>
-</span><span id="line-291">    <span class="n">output_path</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
-</span><span id="line-292">
-</span><span id="line-293">    <span class="k">return</span> <span class="n">output_path</span></div>
+</span><span id="line-290">    <span class="k">return</span> <span class="n">output_path</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -480,7 +477,7 @@
 </footer>
     </div>
     
-    <script src="../../../_static/documentation_options.js?v=6e0256f3"></script>
+    <script src="../../../_static/documentation_options.js?v=ca7ad2ea"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -1,0 +1,18 @@
+aw\_agents.adapters.json\_types
+===============================
+
+.. automodule:: aw_agents.adapters.json_types
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      JSON_TYPES
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      annotation_from_json_type
+   

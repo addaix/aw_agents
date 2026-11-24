@@ -1,4 +1,4 @@
-> built 2026-11-24 04:47 UTC from 24434e1 (main) · aw_agents 0.1.6. Details: build_info.json
+> built 2026-11-24 05:06 UTC from 59c2e56 (main) · aw_agents 0.1.7. Details: build_info.json
 
 # index.html.md
 
@@ -852,9 +852,63 @@ Generate an MCP server script for an agent.
 
 ### Modules
 
-| [`mcp`](_autosummary/aw_agents.adapters.mcp.html.md#module-aw_agents.adapters.mcp)         | MCP (Model Context Protocol) adapter for AW agents.   |
-|--------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| [`openapi`](_autosummary/aw_agents.adapters.openapi.html.md#module-aw_agents.adapters.openapi) | OpenAPI/FastAPI adapter for AW agents.                |
+| [`json_types`](_autosummary/aw_agents.adapters.json_types.html.md#module-aw_agents.adapters.json_types)   | JSON-schema `type` -> Python annotation, shared by the adapters.   |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| [`mcp`](_autosummary/aw_agents.adapters.mcp.html.md#module-aw_agents.adapters.mcp)                 | MCP (Model Context Protocol) adapter for AW agents.                |
+| [`openapi`](_autosummary/aw_agents.adapters.openapi.html.md#module-aw_agents.adapters.openapi)         | OpenAPI/FastAPI adapter for AW agents.                             |
+
+
+# _autosummary/aw_agents.adapters.json_types.html.md
+
+# aw_agents.adapters.json_types
+
+JSON-schema `type` -> Python annotation, shared by the adapters.
+
+A JSON-schema `type` is either one type name (`"string"`) or a union of them
+(`["string", "integer", "null"]`). Every adapter that turns an agent’s tool schema
+into Python types (the MCP adapter’s signatures, the OpenAPI adapter’s request models)
+goes through [`annotation_from_json_type()`](_autosummary/aw_agents.adapters.json_types.html.md#aw_agents.adapters.json_types.annotation_from_json_type), so a union means the same thing on
+every surface: a value any listed type accepts is accepted.
+
+### Module Attributes
+
+| [`JSON_TYPES`](_autosummary/aw_agents.adapters.json_types.html.md#aw_agents.adapters.json_types.JSON_TYPES)   | JSON-schema `type` name -> the Python type pydantic turns back into that type.   |
+|---------------------------------------------------------------|----------------------------------------------------------------------------------|
+
+### Functions
+
+| [`annotation_from_json_type`](_autosummary/aw_agents.adapters.json_types.html.md#aw_agents.adapters.json_types.annotation_from_json_type)(json_type, \*[, ...])   | The annotation for a JSON-schema `type` (one name or a list of names).   |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+
+### aw_agents.adapters.json_types.JSON_TYPES *: [Dict](https://docs.python.org/3/library/typing.html#typing.Dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), [Any](https://docs.python.org/3/library/typing.html#typing.Any)]* *= {'array': <class 'list'>, 'boolean': <class 'bool'>, 'integer': <class 'int'>, 'number': <class 'float'>, 'object': <class 'dict'>, 'string': <class 'str'>}*
+
+JSON-schema `type` name -> the Python type pydantic turns back into that type.
+
+### aw_agents.adapters.json_types.annotation_from_json_type(json_type, , items=None, unknown=typing.Any)
+
+The annotation for a JSON-schema `type` (one name or a list of names).
+
+A union is the `Union` of every known non-null type, in schema order, made
+`Optional` when `"null"` is listed; a single type stays plain. `items`, when
+given, is the item annotation used for `"array"`. When no listed type is known,
+the result is `unknown` (`Any` by default).
+
+```pycon
+>>> annotation_from_json_type("integer")
+<class 'int'>
+>>> annotation_from_json_type(["string", "integer"])
+typing.Union[str, int]
+>>> annotation_from_json_type(["string", "integer", "null"])
+typing.Union[str, int, NoneType]
+>>> annotation_from_json_type(["null", "integer"])
+typing.Optional[int]
+>>> annotation_from_json_type(["array", "null"], items=str)
+typing.Optional[list[str]]
+>>> annotation_from_json_type(["mystery"])
+typing.Any
+>>> annotation_from_json_type(None, unknown=str)
+<class 'str'>
+```
 
 
 # _autosummary/aw_agents.adapters.mcp.html.md
@@ -1693,16 +1747,18 @@ Utils for aw_agents
 
 # About this build
 
-This documentation was built on **2026-11-24 04:47 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee"><code>24434e1</code></a> on branch <code>main</code>, for **aw_agents 0.1.6** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-24 05:06 UTC** from commit <a href="https://github.com/addaix/aw_agents/commit/59c2e56e5f6dd453eeae5c368f34eaa742f06223"><code>59c2e56</code></a> on branch <code>main</code>, for **aw_agents 0.1.7** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.7) is behind the latest release on PyPI (0.1.8): `pip install aw_agents` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee"><code>24434e15e37da2512d91cdbce7b4fd60b70879ee</code></a> |
+| Commit              | <a href="https://github.com/addaix/aw_agents/commit/59c2e56e5f6dd453eeae5c368f34eaa742f06223"><code>59c2e56e5f6dd453eeae5c368f34eaa742f06223</code></a> |
 | Branch              | <code>main</code>                                                                                                                                       |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -1713,9 +1769,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/aw_agents</code>                                                              |
-| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45328572564">45328572564</a>     |
+| Run          | <a href="https://github.com/addaix/aw_agents/actions/runs/45330665415">45330665415</a>     |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>24434e15e37da2512d91cdbce7b4fd60b70879ee</code> (in the history of the built commit) |
+| Event commit | <code>59c2e56e5f6dd453eeae5c368f34eaa742f06223</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1740,13 +1796,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/aw_agents/0.1.6/">0.1.6</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/aw_agents/0.1.8/">0.1.8</a>, newer than the documented version (0.1.7).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/aw_agents && cd aw_agents
-git checkout 24434e15e37da2512d91cdbce7b4fd60b70879ee
+git checkout 59c2e56e5f6dd453eeae5c368f34eaa742f06223
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

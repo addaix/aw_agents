@@ -24,5 +24,6 @@ aw\_agents.adapters
    :toctree:
    :recursive:
 
+   json_types
    mcp
    openapi

@@ -7,6 +7,7 @@
 
 - [aw_agents](aw_agents.html.md): aw_agents - AI Agents for Agentic Workflows
 - [aw_agents.adapters](aw_agents.adapters.html.md): Adapters for exposing agents to different platforms.
+- [aw_agents.adapters.json_types](aw_agents.adapters.json_types.html.md): JSON-schema &#96;type&#96; -&gt; Python annotation, shared by the adapters.
 - [aw_agents.adapters.mcp](aw_agents.adapters.mcp.html.md): MCP (Model Context Protocol) adapter for AW agents.
 - [aw_agents.adapters.openapi](aw_agents.adapters.openapi.html.md): OpenAPI/FastAPI adapter for AW agents.
 - [aw_agents.agents](aw_agents.agents.html.md): Agents for agentic workflows.

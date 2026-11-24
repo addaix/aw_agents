@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-24T04:47:28Z",
+  "built_at": "2026-11-24T05:06:15Z",
   "package": {
     "name": "aw_agents",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "display_name": "aw_agents",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "24434e15e37da2512d91cdbce7b4fd60b70879ee",
-    "short_commit": "24434e1",
+    "commit": "59c2e56e5f6dd453eeae5c368f34eaa742f06223",
+    "short_commit": "59c2e56",
     "branch": "main",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/addaix/aw_agents",
-    "commit_url": "https://github.com/addaix/aw_agents/commit/24434e15e37da2512d91cdbce7b4fd60b70879ee",
+    "commit_url": "https://github.com/addaix/aw_agents/commit/59c2e56e5f6dd453eeae5c368f34eaa742f06223",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "addaix/aw_agents",
-    "sha": "24434e15e37da2512d91cdbce7b4fd60b70879ee",
+    "sha": "59c2e56e5f6dd453eeae5c368f34eaa742f06223",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "45328572564",
-    "run_url": "https://github.com/addaix/aw_agents/actions/runs/45328572564",
+    "run_id": "45330665415",
+    "run_url": "https://github.com/addaix/aw_agents/actions/runs/45330665415",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -55,19 +55,21 @@
     "docs_dir": "docsrc"
   },
   "site": {
-    "modules_documented": 10,
-    "objects_documented": 64
+    "modules_documented": 11,
+    "objects_documented": 66
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.6",
-    "relation": "same",
+    "latest": "0.1.8",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/addaix/aw_agents && cd aw_agents\ngit checkout 24434e15e37da2512d91cdbce7b4fd60b70879ee\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/addaix/aw_agents && cd aw_agents\ngit checkout 59c2e56e5f6dd453eeae5c368f34eaa742f06223\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.7) is behind the latest release on PyPI (0.1.8): `pip install aw_agents` gives newer code than these docs describe."
+    ]
   }
 }

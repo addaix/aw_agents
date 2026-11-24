@@ -82,6 +82,7 @@ Generate an MCP server script for an agent.
 
 ### Modules
 
-| [`mcp`](aw_agents.adapters.mcp.html.md#module-aw_agents.adapters.mcp)         | MCP (Model Context Protocol) adapter for AW agents.   |
-|--------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| [`openapi`](aw_agents.adapters.openapi.html.md#module-aw_agents.adapters.openapi) | OpenAPI/FastAPI adapter for AW agents.                |
+| [`json_types`](aw_agents.adapters.json_types.html.md#module-aw_agents.adapters.json_types)   | JSON-schema `type` -> Python annotation, shared by the adapters.   |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| [`mcp`](aw_agents.adapters.mcp.html.md#module-aw_agents.adapters.mcp)                 | MCP (Model Context Protocol) adapter for AW agents.                |
+| [`openapi`](aw_agents.adapters.openapi.html.md#module-aw_agents.adapters.openapi)         | OpenAPI/FastAPI adapter for AW agents.                             |
